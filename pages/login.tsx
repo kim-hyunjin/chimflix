@@ -22,6 +22,10 @@ const Login = () => {
   const handleLoginWithEmail: MouseEventHandler<HTMLButtonElement> = async (e) => {
     e.preventDefault();
 
+    if (isLoading) {
+      return;
+    }
+
     const [isValid, errMsg] = emailValidator.validate(email);
 
     if (!isValid) {
@@ -83,7 +87,11 @@ const Login = () => {
             onChange={handleOnChangeEmail}
           />
           <p className={styles.userMsg}>{userMsg}</p>
-          <button className={styles.loginBtn} onClick={handleLoginWithEmail}>
+          <button
+            className={styles.loginBtn}
+            onClick={handleLoginWithEmail}
+            style={{ cursor: isLoading ? 'default' : 'pointer' }}
+          >
             {isLoading ? 'Loading...' : 'Sign In'}
           </button>
         </div>
