@@ -68,7 +68,7 @@ const Video = ({
           className={styles.videoPlayer}
           width='100%'
           height='360'
-          src={`https://www.youtube.com/embed/${videos[0].id}?autoplay=1`}
+          src={`https://www.youtube.com/embed/${videos[0]?.id}?autoplay=1`}
           frameBorder='0'
           allowFullScreen
         ></iframe>
