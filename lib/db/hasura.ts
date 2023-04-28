@@ -1,3 +1,5 @@
+import { Stats } from '@/types/hasura';
+
 async function fetchGraphQL(
   operationsDoc: string,
   operationName: string,
@@ -41,10 +43,7 @@ const operationsDoc = `
 
   mutation InsertUser($email: String!, $issuer: String!) {
     insert_users(objects: {email: $email, issuer: $issuer}) {
-      returning {
-        email
-        issuer
-      }
+      affected_rows
     }
   }
 
@@ -62,6 +61,34 @@ const operationsDoc = `
       videoId
       favourited
       watched
+    }
+  }
+
+  mutation InsertStats($userId: String!, $videoId: String!) {
+    insert_stats_one(object: {
+      userId: $userId, 
+      videoId: $videoId
+      favourited: 0, 
+      watched: false, 
+    }) {
+      id
+    }
+  }
+
+  mutation UpdateStats($favourited: Int!, $userId: String!, $watched: Boolean!, $videoId: String!) {
+    update_stats(
+      _set: {watched: $watched, favourited: $favourited}, 
+      where: {
+        userId: {_eq: $userId}, 
+        videoId: {_eq: $videoId}
+      }) {
+      returning {
+        id
+        userId
+        videoId
+        favourited
+        watched
+      }
     }
   }
 `;
@@ -83,7 +110,35 @@ export async function createNewUser(token: string, metadata: { email: string; is
   await fetchGraphQL(operationsDoc, 'InsertUser', metadata, token);
 }
 
-export async function findVideoIdByUser(token: string, issuer: string, videoId: string) {
+export async function findVideoStatsByUser(
+  token: string,
+  issuer: string,
+  videoId: string
+): Promise<Stats> {
   const res = await fetchGraphQL(operationsDoc, 'StatsByIssuer', { issuer, videoId }, token);
   return res?.data?.stats;
+}
+
+export async function insertStats(token: string, issuer: string, videoId: string) {
+  await fetchGraphQL(
+    operationsDoc,
+    'InsertStats',
+    {
+      userId: issuer,
+      videoId,
+    },
+    token
+  );
+}
+
+export async function updateStats(
+  token: string,
+  metadata: {
+    favourited: number;
+    userId: string;
+    watched: boolean;
+    videoId: string;
+  }
+): Promise<Stats> {
+  return await fetchGraphQL(operationsDoc, 'UpdateStats', metadata, token);
 }
