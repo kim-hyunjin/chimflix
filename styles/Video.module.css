@@ -59,11 +59,18 @@
   overflow-y: scroll;
 }
 
+.topContent {
+  display: flex;
+  align-items: center;
+  margin-top: 1.5rem /* 24px */;
+  margin-bottom: 0.5rem /* 8px */;
+}
+
 .publishTime {
   font-size: 1.125rem /* 18px */;
   line-height: 1.75rem /* 28px */;
-  margin-top: 1.5rem /* 24px */;
-  margin-bottom: 0.5rem /* 8px */;
+  margin-right: 1rem;
+
   color: var(--green10);
 }
 
@@ -116,10 +123,6 @@
 
 .likeDislikeBtnWrapper {
   display: flex;
-  margin-bottom: 0.75rem /* 12px */;
-  position: absolute;
-  top: 35%;
-  padding-left: 1rem /* 48px */;
 }
 
 .btnWrapper {
@@ -128,11 +131,11 @@
   border-width: 2px;
   background-color: var(--gray40);
   border-radius: 9999px;
-  padding: 0.5rem /* 8px */;
+  padding: 0.2rem;
   display: flex;
   justify-content: center;
 }
 
 .likeBtnWrapper {
-  margin-right: 0.5rem /* 8px */;
+  margin-right: 0.1rem;
 }

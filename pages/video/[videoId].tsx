@@ -75,24 +75,27 @@ const Video = ({ video, stats }: { video: VideoInfo; stats: Stats }) => {
           frameBorder='0'
           allowFullScreen
         ></iframe>
-        <div className={styles.likeDislikeBtnWrapper}>
-          <div className={styles.likeBtnWrapper}>
-            <button onClick={handleToggleLike}>
-              <div className={styles.btnWrapper}>
-                <Like selected={toggleLike} />
-              </div>
-            </button>
-          </div>
-          <button onClick={handleToggleDislike}>
-            <div className={styles.btnWrapper}>
-              <DisLike selected={toggleDisLike} />
-            </div>
-          </button>
-        </div>
+
         <div className={styles.modalBody}>
           <div className={styles.modalBodyContent}>
             <div className={styles.col1}>
-              <p className={styles.publishTime}>{publishedAt}</p>
+              <div className={styles.topContent}>
+                <p className={styles.publishTime}>{publishedAt}</p>
+                <div className={styles.likeDislikeBtnWrapper}>
+                  <div className={styles.likeBtnWrapper}>
+                    <button onClick={handleToggleLike}>
+                      <div className={styles.btnWrapper}>
+                        <Like selected={toggleLike} />
+                      </div>
+                    </button>
+                  </div>
+                  <button onClick={handleToggleDislike}>
+                    <div className={styles.btnWrapper}>
+                      <DisLike selected={toggleDisLike} />
+                    </div>
+                  </button>
+                </div>
+              </div>
               <p className={styles.title}>{title}</p>
               <p className={styles.description}>{description}</p>
             </div>
