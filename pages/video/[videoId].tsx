@@ -17,13 +17,11 @@ import { Stats } from '@/types/hasura';
 
 Modal.setAppElement('#__next');
 
-export const getServerSideProps: GetServerSideProps = async ({ params, req, res }) => {
+export const getServerSideProps: GetServerSideProps = async ({ params, req }) => {
   const videoId = String(params?.videoId);
   const token = String(req.cookies.token);
 
-  const video: VideoInfo | null = await getVideoDetail(videoId);
-  const stats: Stats | undefined = await getStatsData(token, videoId);
-  console.log({ stats });
+  const [video, stats] = await Promise.all([getVideoDetail(videoId), getStatsData(token, videoId)]);
 
   if (stats) {
     return {
