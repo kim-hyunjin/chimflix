@@ -28,28 +28,42 @@ export async function updateStatsWithToken(token: string, data: UpdateStatsData)
 }
 
 export default async function handler(req: NextApiRequest, resp: NextApiResponse) {
-  if (req.method !== 'POST') {
+  if (req.method && !['GET', 'POST'].includes(req.method)) {
     resp.status(405).send({ done: false });
     return;
   }
   try {
     const token = req.cookies.token;
     if (!token) {
-      resp.status(403).send({ done: false, error: 'not exist token in cookie' });
+      resp.status(403).send({ done: false, msg: 'not exist token in cookie' });
       return;
     }
 
-    const { videoId, favourited, watched = true } = req.body;
+    const videoId = req.method === 'POST' ? req.body.videoId : req.query.videoId;
     if (!videoId) {
-      throw Error('invalid request - not exist videoId');
+      resp.status(400).send({ done: false, msg: 'bad request - not exist videoId' });
     }
+
     const foundVideoStats = await getStatsData(token, videoId);
-    if (foundVideoStats) {
-      const updated = await updateStatsWithToken(token, { videoId, favourited, watched });
-      resp.send({ msg: 'it works', updated });
-    } else {
-      const created = await createNewStats(token, videoId);
-      resp.send({ msg: 'it works', created });
+
+    if (req.method === 'GET') {
+      if (foundVideoStats) {
+        resp.send({ foundVideoStats });
+      } else {
+        resp.status(404).send({ user: null, msg: 'video not found' });
+      }
+      return;
+    }
+
+    if (req.method === 'POST') {
+      if (foundVideoStats) {
+        const { favourited, watched = true } = req.body;
+        const updated = await updateStatsWithToken(token, { videoId, favourited, watched });
+        resp.send({ msg: 'it works', updated });
+      } else {
+        const created = await createNewStats(token, videoId);
+        resp.send({ msg: 'it works', created });
+      }
     }
   } catch (error: any) {
     console.error('Error occurred /stats', error);
