@@ -47,6 +47,23 @@ const operationsDoc = `
       }
     }
   }
+
+  query StatsByIssuer($issuer: String!, $videoId: String!) {
+    stats(where: {
+      userId: {
+        _eq: $issuer
+      },
+      videoId: {
+        _eq: $videoId
+      }
+    }) {
+      id
+      userId
+      videoId
+      favourited
+      watched
+    }
+  }
 `;
 
 export async function isNewUser(token: string, issuer: string) {
@@ -64,4 +81,9 @@ export async function isNewUser(token: string, issuer: string) {
 
 export async function createNewUser(token: string, metadata: { email: string; issuer: string }) {
   await fetchGraphQL(operationsDoc, 'InsertUser', metadata, token);
+}
+
+export async function findVideoIdByUser(token: string, issuer: string, videoId: string) {
+  const res = await fetchGraphQL(operationsDoc, 'StatsByIssuer', { issuer, videoId }, token);
+  return res?.data?.stats;
 }

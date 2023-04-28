@@ -4,36 +4,28 @@ import Modal from 'react-modal';
 import clsx from 'classnames';
 
 import styles from '@/styles/Video.module.css';
-import { getVideoDetail, getVideos } from '@/lib/videos';
+import { getVideoDetail } from '@/lib/videos';
 import { VideoInfo } from '@/types/youtube';
-import { GetStaticProps } from 'next';
+import { GetServerSideProps } from 'next';
 import NavBar from '@/components/nav/Navbar';
 import useLikeHandler from '@/hooks/useLikeHandler';
 import Like from '@/components/icons/Like';
 import DisLike from '@/components/icons/DisLike';
 
+import { getStatsData } from 'pages/api/stats';
+
 Modal.setAppElement('#__next');
 
-export const getStaticProps: GetStaticProps = async ({ params }) => {
+export const getServerSideProps: GetServerSideProps = async ({ params, req, res }) => {
   const video: VideoInfo | null = await getVideoDetail(String(params?.videoId));
+  const stats: any = await getStatsData(String(req.cookies.token), String(params?.videoId));
 
   return {
     props: {
       video,
     },
-    revalidate: 60 * 30, // 30min
   };
 };
-
-export async function getStaticPaths() {
-  const listOfVideos = await getVideos();
-
-  const paths = listOfVideos.map((video) => ({
-    params: { videoId: video.id },
-  }));
-
-  return { paths, fallback: true };
-}
 
 const Video = ({ video }: { video: VideoInfo }) => {
   const router = useRouter();
