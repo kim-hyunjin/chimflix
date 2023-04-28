@@ -18,3 +18,11 @@ export const createJwtToken = (issuer: string) => {
 
   return token;
 };
+
+export const getIssuerFromToken = (token: string): string => {
+  const decoded = jwt.verify(token, String(process.env.JWT_SECRET));
+  if (typeof decoded === 'string' || !decoded.issuer) {
+    throw Error('issuer value not exist in jwt');
+  }
+  return decoded.issuer;
+};

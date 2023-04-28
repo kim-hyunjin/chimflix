@@ -12,26 +12,43 @@ import useLikeHandler from '@/hooks/useLikeHandler';
 import Like from '@/components/icons/Like';
 import DisLike from '@/components/icons/DisLike';
 
-import { getStatsData } from 'pages/api/stats';
+import { createNewStats, getStatsData } from 'pages/api/stats';
+import { Stats } from '@/types/hasura';
 
 Modal.setAppElement('#__next');
 
 export const getServerSideProps: GetServerSideProps = async ({ params, req, res }) => {
-  const video: VideoInfo | null = await getVideoDetail(String(params?.videoId));
-  const stats: any = await getStatsData(String(req.cookies.token), String(params?.videoId));
+  const videoId = String(params?.videoId);
+  const token = String(req.cookies.token);
 
+  const video: VideoInfo | null = await getVideoDetail(videoId);
+  const stats: Stats | undefined = await getStatsData(token, videoId);
+  console.log({ stats });
+
+  if (stats) {
+    return {
+      props: {
+        video,
+        stats,
+      },
+    };
+  }
+
+  const newStats = await createNewStats(token, videoId);
   return {
     props: {
       video,
+      stats: newStats,
     },
   };
 };
 
-const Video = ({ video }: { video: VideoInfo }) => {
+const Video = ({ video, stats }: { video: VideoInfo; stats: Stats }) => {
   const router = useRouter();
   const { videoId } = router.query;
 
-  const { toggleLike, toggleDisLike, handleToggleLike, handleToggleDislike } = useLikeHandler();
+  const { toggleLike, toggleDisLike, handleToggleLike, handleToggleDislike } =
+    useLikeHandler(stats);
 
   const handleClose = useCallback(() => {
     router.back();

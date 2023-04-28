@@ -68,14 +68,18 @@ const operationsDoc = `
     insert_stats_one(object: {
       userId: $userId, 
       videoId: $videoId
-      favourited: 0, 
+      favourited: null, 
       watched: false, 
     }) {
       id
+      userId
+      videoId
+      favourited
+      watched
     }
   }
 
-  mutation UpdateStats($favourited: Int!, $userId: String!, $watched: Boolean!, $videoId: String!) {
+  mutation UpdateStats($favourited: Int, $userId: String!, $watched: Boolean!, $videoId: String!) {
     update_stats(
       _set: {watched: $watched, favourited: $favourited}, 
       where: {
@@ -114,13 +118,16 @@ export async function findVideoStatsByUser(
   token: string,
   issuer: string,
   videoId: string
-): Promise<Stats> {
+): Promise<Stats | undefined> {
   const res = await fetchGraphQL(operationsDoc, 'StatsByIssuer', { issuer, videoId }, token);
-  return res?.data?.stats;
+  if (res?.data?.stats?.length) {
+    return res?.data?.stats[0];
+  }
+  return undefined;
 }
 
-export async function insertStats(token: string, issuer: string, videoId: string) {
-  await fetchGraphQL(
+export async function insertStats(token: string, issuer: string, videoId: string): Promise<Stats> {
+  return await fetchGraphQL(
     operationsDoc,
     'InsertStats',
     {
@@ -134,7 +141,7 @@ export async function insertStats(token: string, issuer: string, videoId: string
 export async function updateStats(
   token: string,
   metadata: {
-    favourited: number;
+    favourited: number | null;
     userId: string;
     watched: boolean;
     videoId: string;
