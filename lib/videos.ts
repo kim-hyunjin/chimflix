@@ -5,9 +5,15 @@ import { getIssuerFromToken } from './token';
 const YOUTUBE_API_URL = 'https://www.googleapis.com/youtube/v3';
 const calmdownman_id = 'UCUj6rrhMTR9pipbAWBAMvUQ';
 
-type GetVideoOption = {
+interface GetVideoOption {
   order?: 'date' | 'viewCount';
-};
+  pageToken?: string;
+}
+
+interface GetVideoWithKeywordParam extends GetVideoOption {
+  id: string;
+  keyword: string;
+}
 
 const fetchYoutubeDatas = async <T = any>(
   url: string,
@@ -48,11 +54,31 @@ const commonSnippetMapper = (v: any) => ({
  * /search
  */
 export const getVideos = (option?: GetVideoOption): Promise<YoutubeSnippet[]> => {
-  const URL = `${YOUTUBE_API_URL}/search?part=snippet&channelId=${calmdownman_id}&order=${
+  let URL = `${YOUTUBE_API_URL}/search?part=snippet&channelId=${calmdownman_id}&order=${
     option?.order || 'date'
   }&type=video&maxResults=25&key=${process.env.YOUTUBE_API_KEY}`;
+  if (option?.pageToken) {
+    URL = URL.concat(`&pageToken=${option.pageToken}`);
+  }
 
   return fetchYoutubeDatas<YoutubeSnippet>(URL, commonSnippetMapper);
+};
+
+export const getVideosWithKeyword = async (
+  params: GetVideoWithKeywordParam
+): Promise<{ key: string; contents: YoutubeSnippet[] }> => {
+  let URL = `${YOUTUBE_API_URL}/search?part=snippet&channelId=${calmdownman_id}&order=${
+    params?.order || 'date'
+  }&type=video&maxResults=25&key=${process.env.YOUTUBE_API_KEY}&q=${params.keyword}`;
+  if (params?.pageToken) {
+    URL = URL.concat(`&pageToken=${params.pageToken}`);
+  }
+
+  const contents = await fetchYoutubeDatas<YoutubeSnippet>(URL, commonSnippetMapper);
+  return {
+    key: params.id,
+    contents,
+  };
 };
 
 /**
