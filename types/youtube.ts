@@ -5,13 +5,9 @@ export interface YoutubeSnippet {
   description: string;
 }
 
-export interface VideoInfo {
-  id: string;
-  title: string;
-  description: string;
+export interface VideoInfo extends YoutubeSnippet {
   publishedAt: string;
   viewCount: number;
-  imgUrl: string;
 }
 
 export interface PlaylistInfo {

@@ -142,12 +142,15 @@ export const getPlaylistDetail = async (playlistId: string): Promise<PlaylistInf
   }
 };
 
-export const getWatchItAgainVideos = async (token: string): Promise<VideoInfo[]> => {
+export const getWatchItAgainVideos = async (
+  token: string,
+  offset?: number
+): Promise<VideoInfo[]> => {
   try {
     const issuer = getIssuerFromToken(token);
-    const videoIds = await getWatchedVideos(token, issuer);
-    if (videoIds) {
-      return (await Promise.all(videoIds.map((id) => getVideoDetail(id)))).filter(
+    const watchedInfo = await getWatchedVideos(token, issuer, offset);
+    if (watchedInfo) {
+      return (await Promise.all(watchedInfo.watched.map((id) => getVideoDetail(id)))).filter(
         (d) => d !== null
       ) as VideoInfo[];
     }

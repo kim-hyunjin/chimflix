@@ -96,12 +96,17 @@ const operationsDoc = `
     }
   }
 
-  query WatchedVideos($userId: String!) {
-    stats(where: {
+  query WatchedVideos($userId: String!, $offset: Int!) {
+    stats_aggregate(limit: 10, offset: $offset, where: {
       watched: {_eq: true}, 
       userId: {_eq: $userId},
     }) {
-      videoId
+      nodes {
+        videoId
+      }
+      aggregate {
+        count
+      }
     }
   }
 `;
@@ -161,18 +166,26 @@ export async function updateStats(
 
 export async function getWatchedVideos(
   token: string,
-  issuer: string
-): Promise<string[] | undefined> {
+  issuer: string,
+  offset: number = 0
+): Promise<{ watched: string[]; total: number } | undefined> {
   const res = await fetchGraphQL(
     operationsDoc,
     'WatchedVideos',
     {
       userId: issuer,
+      offset,
     },
     token
   );
-  if (res?.data?.stats?.length > 0) {
-    return res.data.stats.map((s: any) => s.videoId);
+  if (res?.data?.stats_aggregate) {
+    const watched = res.data.stats_aggregate.nodes.map((s: any) => s.videoId);
+    const total = res.data.stats_aggregate.aggregate.count;
+
+    return {
+      watched,
+      total,
+    };
   }
   return undefined;
 }
