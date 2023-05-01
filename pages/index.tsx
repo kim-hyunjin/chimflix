@@ -12,18 +12,22 @@ type IndexPageServerData = {
   recentVideos: YoutubeSnippet[];
   popularVideos: YoutubeSnippet[];
   playlist: YoutubeSnippet[];
-  otherContents: { key: string; contents: YoutubeSnippet[] }[];
+  otherContents: { title: string; contents: YoutubeSnippet[] }[];
 };
 export const getStaticProps: GetStaticProps<IndexPageServerData> = async () => {
   const [recentVideos, popularVideos, playlist, ...otherContents] = await Promise.all([
     getVideos({ order: 'date' }),
     getVideos({ order: 'viewCount' }),
     getPlaylists(),
-    getVideosWithKeyword({ id: '월드컵 모음', order: 'viewCount', keyword: '월드컵' }),
-    getVideosWithKeyword({ id: '도라지 도라지 배도라지', order: 'viewCount', keyword: '배도라지' }),
-    getVideosWithKeyword({ id: '침.철.단', order: 'viewCount', keyword: '침철단' }),
-    getVideosWithKeyword({ id: '다양한 손님들과', order: 'viewCount', keyword: '초대석' }),
-    getVideosWithKeyword({ id: '유익함까지 챙기기', order: 'viewCount', keyword: '특강' }),
+    getVideosWithKeyword({ title: '월드컵 모음', order: 'viewCount', keyword: '월드컵' }),
+    getVideosWithKeyword({
+      title: '도라지 도라지 배도라지',
+      order: 'viewCount',
+      keyword: '배도라지',
+    }),
+    getVideosWithKeyword({ title: '침.철.단', order: 'viewCount', keyword: '침철단' }),
+    getVideosWithKeyword({ title: '다양한 손님들과', order: 'viewCount', keyword: '초대석' }),
+    getVideosWithKeyword({ title: '유익함까지 챙기기', order: 'viewCount', keyword: '특강' }),
   ]);
 
   return {
@@ -69,12 +73,12 @@ const Home: NextPage<IndexPageServerData> = ({
           <SectionCards title='인기 컨텐츠' datas={popularVideos} size={'medium'} type={'video'} />
           <SectionCards title='플레이리스트' datas={playlist} size={'medium'} type={'playlist'} />
           {watched.length > 0 && (
-            <SectionCards title='다시 보기' datas={watched} size={'medium'} type={'video'} />
+            <SectionCards title='평가한 컨텐츠' datas={watched} size={'medium'} type={'video'} />
           )}
           {otherContents.map((c) => (
             <SectionCards
-              key={c.key}
-              title={c.key}
+              key={c.title}
+              title={c.title}
               datas={c.contents}
               size={'medium'}
               type={'video'}

@@ -11,7 +11,7 @@ interface GetVideoOption {
 }
 
 interface GetVideoWithKeywordParam extends GetVideoOption {
-  id: string;
+  title: string;
   keyword: string;
 }
 
@@ -64,19 +64,22 @@ export const getVideos = (option?: GetVideoOption): Promise<YoutubeSnippet[]> =>
   return fetchYoutubeDatas<YoutubeSnippet>(URL, commonSnippetMapper);
 };
 
-export const getVideosWithKeyword = async (
-  params: GetVideoWithKeywordParam
-): Promise<{ key: string; contents: YoutubeSnippet[] }> => {
+export const getVideosWithKeyword = async ({
+  title,
+  keyword,
+  order,
+  pageToken,
+}: GetVideoWithKeywordParam): Promise<{ title: string; contents: YoutubeSnippet[] }> => {
   let URL = `${YOUTUBE_API_URL}/search?part=snippet&channelId=${calmdownman_id}&order=${
-    params?.order || 'date'
-  }&type=video&maxResults=25&key=${process.env.YOUTUBE_API_KEY}&q=${params.keyword}`;
-  if (params?.pageToken) {
-    URL = URL.concat(`&pageToken=${params.pageToken}`);
+    order || 'date'
+  }&type=video&maxResults=25&key=${process.env.YOUTUBE_API_KEY}&q=${keyword}`;
+  if (pageToken) {
+    URL = URL.concat(`&pageToken=${pageToken}`);
   }
 
   const contents = await fetchYoutubeDatas<YoutubeSnippet>(URL, commonSnippetMapper);
   return {
-    key: params.id,
+    title,
     contents,
   };
 };
