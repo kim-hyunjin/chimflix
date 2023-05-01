@@ -17,17 +17,16 @@ type IndexPageServerData = {
 export const getStaticProps: GetStaticProps<IndexPageServerData> = async () => {
   const [recentVideos, popularVideos, playlist, ...otherContents] = await Promise.all([
     getVideos({ order: 'date' }),
-    getVideos({ order: 'viewCount' }),
-    getPlaylists(),
-    getVideosWithKeyword({ title: '월드컵 모음', order: 'viewCount', keyword: '월드컵' }),
-    getVideosWithKeyword({
-      title: '도라지 도라지 배도라지',
-      order: 'viewCount',
-      keyword: '배도라지',
-    }),
-    getVideosWithKeyword({ title: '침.철.단', order: 'viewCount', keyword: '침철단' }),
-    getVideosWithKeyword({ title: '다양한 손님들과', order: 'viewCount', keyword: '초대석' }),
-    getVideosWithKeyword({ title: '유익함까지 챙기기', order: 'viewCount', keyword: '특강' }),
+    [], // getVideos({ order: 'viewCount' }),
+    [], // getPlaylists(),
+    // getVideosWithKeyword({ title: '월드컵 모음', keyword: '월드컵' }),
+    // getVideosWithKeyword({
+    //   title: '도라지 도라지 배도라지',
+    //   keyword: '배도라지',
+    // }),
+    // getVideosWithKeyword({ title: '침.철.단', keyword: '침철단' }),
+    // getVideosWithKeyword({ title: '다양한 손님들과', keyword: '초대석' }),
+    // getVideosWithKeyword({ title: '유익함까지 챙기기', keyword: '특강' }),
   ]);
 
   return {
@@ -48,11 +47,11 @@ const Home: NextPage<IndexPageServerData> = ({
   otherContents,
 }) => {
   const [watched, setWatched] = useState<YoutubeSnippet[]>([]);
-  useEffect(() => {
-    fetch('/api/watched', { method: 'GET' })
-      .then((r) => r.json())
-      .then((r) => setWatched(r.watched));
-  }, []);
+  // useEffect(() => {
+  //   fetch('/api/watched', { method: 'GET' })
+  //     .then((r) => r.json())
+  //     .then((r) => setWatched(r.watched));
+  // }, []);
   return (
     <div className={styles.container}>
       <Head>
@@ -63,18 +62,18 @@ const Home: NextPage<IndexPageServerData> = ({
 
       <div className={styles.main}>
         <NavBar />
-        <Banner
-          videoId={recentVideos[0].id}
-          title={recentVideos[0].title}
-          imgUrl={recentVideos[0].imgUrl}
-        />
+        {recentVideos[0] && (
+          <Banner
+            videoId={recentVideos[0].id}
+            title={recentVideos[0].title}
+            imgUrl={recentVideos[0].imgUrl}
+          />
+        )}
         <div className={styles.sectionWrapper}>
           <SectionCards title='최신 컨텐츠' datas={recentVideos} size={'large'} type={'video'} />
           <SectionCards title='인기 컨텐츠' datas={popularVideos} size={'medium'} type={'video'} />
           <SectionCards title='플레이리스트' datas={playlist} size={'medium'} type={'playlist'} />
-          {watched.length > 0 && (
-            <SectionCards title='평가한 컨텐츠' datas={watched} size={'medium'} type={'video'} />
-          )}
+          <SectionCards title='평가한 컨텐츠' datas={watched} size={'medium'} type={'video'} />
           {otherContents.map((c) => (
             <SectionCards
               key={c.title}

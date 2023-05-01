@@ -4,4 +4,6 @@ export type Stats = {
   videoId: string;
   favourited: number | null;
   watched: boolean;
+  saved: boolean;
+  playedTime: number;
 };

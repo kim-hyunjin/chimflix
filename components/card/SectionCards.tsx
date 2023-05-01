@@ -15,6 +15,10 @@ const SectionCards = (props: SectionCardsProps) => {
   const { title, datas = [], type, size } = props;
 
   const { scrollRef, onWheel, scrollStyle } = useHorizontalScrolling();
+
+  if (datas.length === 0) {
+    return null;
+  }
   return (
     <section className={styles.container}>
       <h2 className={styles.title}>{title}</h2>

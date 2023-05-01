@@ -20,10 +20,11 @@ type UpdateStatsData = Omit<Stats, 'id' | 'userId'>;
 export async function updateStatsWithToken(token: string, data: UpdateStatsData) {
   const issuer = getIssuerFromToken(token);
 
-  return await updateStats(token, {
+  const res = await updateStats(token, {
     ...data,
     userId: issuer,
   });
+  return res;
 }
 
 export default async function handler(req: NextApiRequest, resp: NextApiResponse) {
@@ -41,6 +42,7 @@ export default async function handler(req: NextApiRequest, resp: NextApiResponse
     const videoId = req.method === 'POST' ? req.body.videoId : req.query.videoId;
     if (!videoId) {
       resp.status(400).send({ done: false, msg: 'bad request - not exist videoId' });
+      return;
     }
 
     const foundVideoStats = await getStatsData(token, videoId);
@@ -56,12 +58,18 @@ export default async function handler(req: NextApiRequest, resp: NextApiResponse
 
     if (req.method === 'POST') {
       if (foundVideoStats) {
-        const { favourited, watched = true } = req.body;
-        const updated = await updateStatsWithToken(token, { videoId, favourited, watched });
-        resp.send({ msg: 'it works', updated });
+        const { favourited, watched = false, saved = false, playedTime = 0 } = req.body;
+        const updated = await updateStatsWithToken(token, {
+          videoId,
+          favourited,
+          watched,
+          saved,
+          playedTime,
+        });
+        resp.send(updated);
       } else {
         const created = await createNewStats(token, videoId);
-        resp.send({ msg: 'it works', created });
+        resp.send(created);
       }
     }
   } catch (error: any) {

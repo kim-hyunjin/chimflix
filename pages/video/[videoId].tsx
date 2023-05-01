@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { useCallback } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import Modal from 'react-modal';
 import clsx from 'classnames';
 
@@ -8,12 +8,15 @@ import { getVideoDetail } from '@/lib/videos';
 import { VideoInfo } from '@/types/youtube';
 import { GetServerSideProps } from 'next';
 import NavBar from '@/components/nav/Navbar';
-import useLikeHandler from '@/hooks/useLikeHandler';
+import useVideoStatUpdateHandler, { LIKE } from '@/hooks/useVideoStatUpdateHandler';
 import Like from '@/components/icons/Like';
 import DisLike from '@/components/icons/DisLike';
 
 import { createNewStats, getStatsData } from 'pages/api/stats';
 import { Stats } from '@/types/hasura';
+import Saved from '@/components/icons/Saved';
+
+import Youtube from 'react-youtube';
 
 Modal.setAppElement('#__next');
 
@@ -22,6 +25,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params, req }) =>
   const token = String(req.cookies.token);
 
   const [video, stats] = await Promise.all([getVideoDetail(videoId), getStatsData(token, videoId)]);
+  console.log({ video, stats });
 
   if (stats) {
     return {
@@ -33,6 +37,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params, req }) =>
   }
 
   const newStats = await createNewStats(token, videoId);
+  console.log({ newStats });
   return {
     props: {
       video,
@@ -45,8 +50,27 @@ const Video = ({ video, stats }: { video: VideoInfo; stats: Stats }) => {
   const router = useRouter();
   const { videoId } = router.query;
 
-  const { toggleLike, toggleDisLike, handleToggleLike, handleToggleDislike } =
-    useLikeHandler(stats);
+  const {
+    favourited,
+    watched,
+    saved,
+    handleToggleLike,
+    handleToggleDislike,
+    handleToggleSave,
+    handlePlay,
+    updatePlayedTime,
+  } = useVideoStatUpdateHandler(stats);
+
+  const youtubeRef = useRef<any>();
+
+  useEffect(() => {
+    return () => {
+      if (youtubeRef.current) {
+        updatePlayedTime(youtubeRef.current.getCurrentTime());
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleClose = useCallback(() => {
     router.back();
@@ -64,15 +88,23 @@ const Video = ({ video, stats }: { video: VideoInfo; stats: Stats }) => {
         className={styles.modal}
         overlayClassName={styles.overlay}
       >
-        <iframe
-          id='ytplayer'
-          className={styles.videoPlayer}
-          width='100%'
-          height='360'
-          src={`https://www.youtube.com/embed/${videoId}?autoplay=1`}
-          frameBorder='0'
-          allowFullScreen
-        ></iframe>
+        <Youtube
+          videoId={String(videoId)}
+          iframeClassName={styles.videoPlayer}
+          opts={{
+            width: '100%',
+            height: '360',
+            playerVars: {
+              autoplay: 1,
+              start: stats.playedTime,
+            },
+          }}
+          onReady={(e) => (youtubeRef.current = e.target)}
+          onPlay={handlePlay}
+          onPause={(e) => {
+            updatePlayedTime(e.target.getCurrentTime());
+          }}
+        />
 
         <div className={styles.modalBody}>
           <div className={styles.modalBodyContent}>
@@ -83,15 +115,16 @@ const Video = ({ video, stats }: { video: VideoInfo; stats: Stats }) => {
                   <div className={styles.likeBtnWrapper}>
                     <button onClick={handleToggleLike}>
                       <div className={styles.btnWrapper}>
-                        <Like selected={toggleLike} />
+                        <Like selected={favourited === LIKE.LIKE} />
                       </div>
                     </button>
                   </div>
                   <button onClick={handleToggleDislike}>
                     <div className={styles.btnWrapper}>
-                      <DisLike selected={toggleDisLike} />
+                      <DisLike selected={favourited === LIKE.DISLIKE} />
                     </div>
                   </button>
+                  <Saved saved={saved} onClick={handleToggleSave} />
                 </div>
               </div>
               <p className={styles.title}>{title}</p>

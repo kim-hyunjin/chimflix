@@ -62,27 +62,28 @@ const operationsDoc = `
       videoId
       favourited
       watched
+      saved
+      playedTime
     }
   }
 
   mutation InsertStats($userId: String!, $videoId: String!) {
     insert_stats_one(object: {
-      userId: $userId, 
+      userId: $userId
       videoId: $videoId
-      favourited: null, 
-      watched: false, 
     }) {
       id
       userId
       videoId
       favourited
       watched
+      saved
     }
   }
 
-  mutation UpdateStats($favourited: Int, $userId: String!, $watched: Boolean!, $videoId: String!) {
+  mutation UpdateStats($favourited: Int, $userId: String!, $watched: Boolean!, $saved: Boolean!, $playedTime: Int!, $videoId: String!) {
     update_stats(
-      _set: {watched: $watched, favourited: $favourited}, 
+      _set: {watched: $watched, favourited: $favourited, saved: $saved, playedTime: $playedTime}, 
       where: {
         userId: {_eq: $userId}, 
         videoId: {_eq: $videoId}
@@ -93,12 +94,14 @@ const operationsDoc = `
         videoId
         favourited
         watched
+        saved
+        playedTime
       }
     }
   }
 
   query WatchedVideos($userId: String!, $offset: Int!) {
-    stats_aggregate(limit: 10, offset: $offset, where: {
+    stats_aggregate(order_by: {id: desc}, limit: 10, offset: $offset, where: {
       watched: {_eq: true}, 
       userId: {_eq: $userId},
     }) {
@@ -142,7 +145,7 @@ export async function findVideoStatsByUser(
 }
 
 export async function insertStats(token: string, issuer: string, videoId: string): Promise<Stats> {
-  return await fetchGraphQL(
+  const created = await fetchGraphQL(
     operationsDoc,
     'InsertStats',
     {
@@ -151,6 +154,8 @@ export async function insertStats(token: string, issuer: string, videoId: string
     },
     token
   );
+
+  return created.data.insert_stats_one;
 }
 
 export async function updateStats(
@@ -159,10 +164,12 @@ export async function updateStats(
     favourited: number | null;
     userId: string;
     watched: boolean;
+    saved: boolean;
     videoId: string;
   }
 ): Promise<Stats> {
-  return await fetchGraphQL(operationsDoc, 'UpdateStats', metadata, token);
+  const res = await fetchGraphQL(operationsDoc, 'UpdateStats', metadata, token);
+  return res.data.update_stats.returning[0];
 }
 
 export async function getWatchedVideos(
@@ -179,6 +186,7 @@ export async function getWatchedVideos(
     },
     token
   );
+  console.log(res?.data?.stats_aggregate);
   if (res?.data?.stats_aggregate) {
     const watched = res.data.stats_aggregate.nodes.map((s: any) => ({
       id: s.videoId,
