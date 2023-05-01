@@ -14,7 +14,7 @@ export default async function handler(req: NextApiRequest, resp: NextApiResponse
     }
 
     const watched = await getWatchItAgainVideos(token);
-    resp.send({ watched });
+    resp.send(watched);
   } catch (error: any) {
     console.error('Error occurred /stats', error);
     resp.status(500).send({ done: false, error: error?.message });

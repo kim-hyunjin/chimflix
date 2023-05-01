@@ -33,7 +33,6 @@ const Home: NextPage<IndexPageServerData> = ({ recentVideos, popularVideos, play
       .then((r) => r.json())
       .then((r) => setWatched(r.watched));
   }, []);
-  console.log({ watched });
   return (
     <div className={styles.container}>
       <Head>

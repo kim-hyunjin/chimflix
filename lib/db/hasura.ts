@@ -1,4 +1,5 @@
 import { Stats } from '@/types/hasura';
+import { YoutubeSnippet } from '@/types/youtube';
 
 async function fetchGraphQL(
   operationsDoc: string,
@@ -168,7 +169,7 @@ export async function getWatchedVideos(
   token: string,
   issuer: string,
   offset: number = 0
-): Promise<{ watched: string[]; total: number } | undefined> {
+): Promise<{ watched: YoutubeSnippet[]; total: number } | undefined> {
   const res = await fetchGraphQL(
     operationsDoc,
     'WatchedVideos',
@@ -179,7 +180,10 @@ export async function getWatchedVideos(
     token
   );
   if (res?.data?.stats_aggregate) {
-    const watched = res.data.stats_aggregate.nodes.map((s: any) => s.videoId);
+    const watched = res.data.stats_aggregate.nodes.map((s: any) => ({
+      id: s.videoId,
+      imgUrl: `https://i.ytimg.com/vi/${s.videoId}/maxresdefault.jpg`,
+    }));
     const total = res.data.stats_aggregate.aggregate.count;
 
     return {
