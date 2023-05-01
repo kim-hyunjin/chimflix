@@ -6,10 +6,12 @@ export interface YoutubeSnippet {
 }
 
 export interface VideoInfo {
+  id: string;
   title: string;
   description: string;
   publishedAt: string;
   viewCount: number;
+  imgUrl: string;
 }
 
 export interface PlaylistInfo {

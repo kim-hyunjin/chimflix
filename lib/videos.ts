@@ -1,4 +1,6 @@
 import { YoutubeSnippet, VideoInfo, PlaylistInfo } from '../types/youtube';
+import { getWatchedVideos } from './db/hasura';
+import { getIssuerFromToken } from './token';
 
 const YOUTUBE_API_URL = 'https://www.googleapis.com/youtube/v3';
 const calmdownman_id = 'UCUj6rrhMTR9pipbAWBAMvUQ';
@@ -76,10 +78,12 @@ export const getVideoDetail = async (id: string): Promise<VideoInfo | null> => {
     const { title, description, publishedAt } = video.snippet;
 
     return {
+      id,
       title,
       description,
       publishedAt: publishedAt.split('T')[0],
       viewCount: video.statistics.viewCount || 0,
+      imgUrl: video.snippet.thumbnails.high.url,
     };
   } catch (e) {
     console.error('error while call youtube api', e);
@@ -135,5 +139,22 @@ export const getPlaylistDetail = async (playlistId: string): Promise<PlaylistInf
   } catch (e) {
     console.error('error while call youtube api', e);
     return null;
+  }
+};
+
+export const getWatchItAgainVideos = async (token: string): Promise<VideoInfo[]> => {
+  try {
+    const issuer = getIssuerFromToken(token);
+    const videoIds = await getWatchedVideos(token, issuer);
+    if (videoIds) {
+      return (await Promise.all(videoIds.map((id) => getVideoDetail(id)))).filter(
+        (d) => d !== null
+      ) as VideoInfo[];
+    }
+
+    return [];
+  } catch (e) {
+    console.error('error while call youtube api', e);
+    return [];
   }
 };

@@ -6,6 +6,7 @@ import NavBar from '../components/nav/Navbar';
 import styles from '../styles/Home.module.css';
 import { getPlaylists, getVideos } from '../lib/videos';
 import { YoutubeSnippet } from '../types/youtube';
+import { useEffect, useState } from 'react';
 
 type IndexPageServerData = {
   recentVideos: YoutubeSnippet[];
@@ -26,6 +27,13 @@ export const getStaticProps: GetStaticProps<IndexPageServerData> = async () => {
 };
 
 const Home: NextPage<IndexPageServerData> = ({ recentVideos, popularVideos, playlist }) => {
+  const [watched, setWatched] = useState<YoutubeSnippet[]>([]);
+  useEffect(() => {
+    fetch('/api/watched', { method: 'GET' })
+      .then((r) => r.json())
+      .then((r) => setWatched(r.watched));
+  }, []);
+  console.log({ watched });
   return (
     <div className={styles.container}>
       <Head>
@@ -45,6 +53,9 @@ const Home: NextPage<IndexPageServerData> = ({ recentVideos, popularVideos, play
           <SectionCards title='최신 컨텐츠' datas={recentVideos} size={'large'} type={'video'} />
           <SectionCards title='인기 컨텐츠' datas={popularVideos} size={'medium'} type={'video'} />
           <SectionCards title='플레이리스트' datas={playlist} size={'medium'} type={'playlist'} />
+          {watched.length > 0 && (
+            <SectionCards title='다시 보기' datas={watched} size={'medium'} type={'video'} />
+          )}
         </div>
       </div>
     </div>

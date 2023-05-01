@@ -95,6 +95,15 @@ const operationsDoc = `
       }
     }
   }
+
+  query WatchedVideos($userId: String!) {
+    stats(where: {
+      watched: {_eq: true}, 
+      userId: {_eq: $userId},
+    }) {
+      videoId
+    }
+  }
 `;
 
 export async function isNewUser(token: string, issuer: string) {
@@ -148,4 +157,22 @@ export async function updateStats(
   }
 ): Promise<Stats> {
   return await fetchGraphQL(operationsDoc, 'UpdateStats', metadata, token);
+}
+
+export async function getWatchedVideos(
+  token: string,
+  issuer: string
+): Promise<string[] | undefined> {
+  const res = await fetchGraphQL(
+    operationsDoc,
+    'WatchedVideos',
+    {
+      userId: issuer,
+    },
+    token
+  );
+  if (res?.data?.stats?.length > 0) {
+    return res.data.stats.map((s: any) => s.videoId);
+  }
+  return undefined;
 }

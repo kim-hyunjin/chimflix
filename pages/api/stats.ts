@@ -1,5 +1,4 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import jwt from 'jsonwebtoken';
 import { findVideoStatsByUser, insertStats, updateStats } from '@/lib/db/hasura';
 import { Stats } from '@/types/hasura';
 import { getIssuerFromToken } from '@/lib/token';
