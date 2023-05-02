@@ -6,6 +6,7 @@ import Card from './Card';
 import clsx from 'classnames';
 
 import styles from './SectionCards.module.css';
+import useInfiniteScroll from '@/hooks/useInfiniteScroll';
 
 interface SectionCardsProps {
   title: string;
@@ -13,11 +14,20 @@ interface SectionCardsProps {
   type: 'video' | 'playlist';
   size?: 'large' | 'medium' | 'small';
   shouldWrap?: boolean;
+  nextDataFetchOption?: {
+    isFetching: boolean;
+    hasNext: boolean;
+    fetchNextData: () => void;
+  };
 }
 const SectionCards = (props: SectionCardsProps) => {
-  const { title, datas = [], type, size, shouldWrap } = props;
+  const { title, datas = [], type, size, shouldWrap, nextDataFetchOption } = props;
 
   const { scrollRef, onWheel, scrollStyle } = useHorizontalScrolling();
+  const { setTargeEl } = useInfiniteScroll(
+    nextDataFetchOption?.isFetching,
+    nextDataFetchOption?.fetchNextData
+  );
 
   if (datas.length === 0) {
     return null;
@@ -38,6 +48,7 @@ const SectionCards = (props: SectionCardsProps) => {
             </a>
           </Link>
         ))}
+        {props.nextDataFetchOption?.hasNext && <div ref={setTargeEl}></div>}
       </div>
     </section>
   );

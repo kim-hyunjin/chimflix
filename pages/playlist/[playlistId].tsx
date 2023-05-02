@@ -4,7 +4,12 @@ import Modal from 'react-modal';
 import clsx from 'classnames';
 
 import styles from '@/styles/Video.module.css';
-import { getPlaylistDetail, getPlaylistItems, getPlaylists } from '@/lib/videos';
+import {
+  getPlaylistDetail,
+  getPlaylistItems,
+  getPlaylists,
+  YoutubeSnippetsWithPage,
+} from '@/lib/videos';
 import { PlaylistInfo, YoutubeSnippet } from '@/types/youtube';
 import { GetStaticProps } from 'next';
 import NavBar from '@/components/nav/Navbar';
@@ -14,7 +19,7 @@ Modal.setAppElement('#__next');
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
   const playlistId = String(params?.playlistId);
-  const videos: YoutubeSnippet[] = await getPlaylistItems(playlistId);
+  const videos: YoutubeSnippetsWithPage = await getPlaylistItems(playlistId);
   const playlistInfo: PlaylistInfo | null = await getPlaylistDetail(playlistId);
 
   return {
@@ -29,7 +34,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 export async function getStaticPaths() {
   const listOfPlaylists = await getPlaylists();
 
-  const paths = listOfPlaylists.map((p) => ({
+  const paths = listOfPlaylists.datas.map((p) => ({
     params: { playlistId: p.id },
   }));
 
@@ -40,7 +45,7 @@ const Video = ({
   videos,
   playlistInfo,
 }: {
-  videos: YoutubeSnippet[];
+  videos: YoutubeSnippetsWithPage;
   playlistInfo: PlaylistInfo | null;
 }) => {
   const router = useRouter();
@@ -51,7 +56,7 @@ const Video = ({
 
   if (!playlistInfo) throw new Error('playlist 정보가 없습니다.');
 
-  const { title, description, publishedAt } = playlistInfo;
+  const { title, description, publishedAt, itemCount } = playlistInfo;
 
   return (
     <div className={styles.container}>
@@ -68,7 +73,7 @@ const Video = ({
           className={styles.videoPlayer}
           width='100%'
           height='360'
-          src={`https://www.youtube.com/embed/${videos[0]?.id}?autoplay=1`}
+          src={`https://www.youtube.com/embed/${videos.datas[0]?.id}?autoplay=1`}
           frameBorder='0'
           allowFullScreen
         ></iframe>
@@ -82,11 +87,11 @@ const Video = ({
             <div className={styles.col2}>
               <p className={clsx(styles.subText, styles.subTextWrapper)}>
                 <span className={styles.labelText}>에피소드: </span>
-                <span className={styles.valueText}>{videos.length}개</span>
+                <span className={styles.valueText}>{itemCount}개</span>
               </p>
             </div>
           </div>
-          <VideoList videos={videos} />
+          <VideoList videos={videos.datas} />
         </div>
       </Modal>
     </div>

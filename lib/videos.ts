@@ -15,10 +15,15 @@ interface GetVideoWithKeywordParam extends GetVideoOption {
   keyword: string;
 }
 
+export interface YoutubeSnippetsWithPage {
+  datas: YoutubeSnippet[];
+  nextPageToken: string | null;
+}
+
 const fetchYoutubeDatas = async <T = any>(
   url: string,
   dataMapper?: (v: any) => T
-): Promise<T[]> => {
+): Promise<{ datas: T[]; nextPageToken: string | null }> => {
   try {
     const response = await fetch(url);
 
@@ -26,16 +31,24 @@ const fetchYoutubeDatas = async <T = any>(
 
     if (data?.error) {
       console.error('youtube api error', data.error);
-      return [];
+      return { datas: [], nextPageToken: null };
     }
 
+    console.log({ data });
+
     if (dataMapper) {
-      return data.items.map(dataMapper);
+      return {
+        datas: data.items.map(dataMapper),
+        nextPageToken: data.nextPageToken ?? null,
+      };
     }
-    return data.items;
+    return {
+      datas: data.items,
+      nextPageToken: data.nextPageToken ?? null,
+    };
   } catch (e) {
     console.error('error while call youtube api', e);
-    return [];
+    return { datas: [], nextPageToken: null };
   }
 };
 
@@ -53,13 +66,12 @@ const commonSnippetMapper = (v: any) => ({
 /**
  * /search
  */
-export const getVideos = (option?: GetVideoOption): Promise<YoutubeSnippet[]> => {
-  let URL = `${YOUTUBE_API_URL}/search?part=snippet&channelId=${calmdownman_id}&order=${
+export const getVideos = (option?: GetVideoOption): Promise<YoutubeSnippetsWithPage> => {
+  const URL = `${YOUTUBE_API_URL}/search?part=snippet&channelId=${calmdownman_id}&order=${
     option?.order || 'date'
-  }&type=video&maxResults=25&key=${process.env.YOUTUBE_API_KEY}`;
-  if (option?.pageToken) {
-    URL = URL.concat(`&pageToken=${option.pageToken}`);
-  }
+  }&type=video&maxResults=25&key=${process.env.YOUTUBE_API_KEY}${
+    option?.pageToken ? `&pageToken=${option.pageToken}` : ''
+  }`;
 
   return fetchYoutubeDatas<YoutubeSnippet>(URL, commonSnippetMapper);
 };
@@ -70,25 +82,26 @@ export const getVideosWithKeyword = async ({
   order,
   pageToken,
 }: GetVideoWithKeywordParam): Promise<{ title: string; contents: YoutubeSnippet[] }> => {
-  let URL = `${YOUTUBE_API_URL}/search?part=snippet&channelId=${calmdownman_id}&order=${
+  const URL = `${YOUTUBE_API_URL}/search?part=snippet&channelId=${calmdownman_id}&order=${
     order || 'date'
-  }&type=video&maxResults=25&key=${process.env.YOUTUBE_API_KEY}&q=${keyword}`;
-  if (pageToken) {
-    URL = URL.concat(`&pageToken=${pageToken}`);
-  }
+  }&type=video&maxResults=25&key=${process.env.YOUTUBE_API_KEY}&q=${keyword}${
+    pageToken ? `&pageToken=${pageToken}` : ''
+  }`;
 
   const contents = await fetchYoutubeDatas<YoutubeSnippet>(URL, commonSnippetMapper);
   return {
     title,
-    contents,
+    contents: contents.datas,
   };
 };
 
 /**
  * /playlists
  */
-export const getPlaylists = (): Promise<YoutubeSnippet[]> => {
-  const URL = `${YOUTUBE_API_URL}/playlists?part=snippet&channelId=${calmdownman_id}&maxResults=25&key=${process.env.YOUTUBE_API_KEY}`;
+export const getPlaylists = (pageToken?: string): Promise<YoutubeSnippetsWithPage> => {
+  const URL = `${YOUTUBE_API_URL}/playlists?part=snippet&channelId=${calmdownman_id}&maxResults=25&key=${
+    process.env.YOUTUBE_API_KEY
+  }${pageToken ? `&pageToken=${pageToken}` : ''}`;
 
   return fetchYoutubeDatas<YoutubeSnippet>(URL, commonSnippetMapper);
 };
@@ -97,14 +110,16 @@ export const getPlaylistDetail = async (playlistId: string): Promise<PlaylistInf
   const URL = `${YOUTUBE_API_URL}/playlists?part=snippet&id=${playlistId}&key=${process.env.YOUTUBE_API_KEY}`;
 
   try {
-    const items = await fetchYoutubeDatas(URL);
+    const data = (await fetchYoutubeDatas(URL)).datas[0];
 
-    const { title, description, publishedAt } = items[0].snippet;
+    const { title, description, publishedAt } = data.snippet;
+    const itemCount = data.contentDetails.itemCount;
 
     return {
       title,
       description,
       publishedAt: new Date(publishedAt).getFullYear().toString(),
+      itemCount,
     };
   } catch (e) {
     return null;
@@ -119,9 +134,8 @@ export const getVideoDetail = async (id: string): Promise<VideoInfo | null> => {
   const URL = `${YOUTUBE_API_URL}/videos?part=${videoDetailParts}&id=${id}&key=${process.env.YOUTUBE_API_KEY}`;
 
   try {
-    const items = await fetchYoutubeDatas(URL);
+    const video = (await fetchYoutubeDatas(URL)).datas[0];
 
-    const video = items[0];
     const { title, description, publishedAt } = video.snippet;
 
     return {
@@ -147,8 +161,13 @@ const playlistItemMapper = (v: any): YoutubeSnippet => ({
   imgUrl: getImgUrl(v.contentDetails.videoId),
 });
 
-export const getPlaylistItems = async (playlistId: string): Promise<YoutubeSnippet[]> => {
-  const URL = `${YOUTUBE_API_URL}/playlistItems?part=snippet,contentDetails&playlistId=${playlistId}&maxResults=50&key=${process.env.YOUTUBE_API_KEY}`;
+export const getPlaylistItems = async (
+  playlistId: string,
+  pageToken?: string
+): Promise<YoutubeSnippetsWithPage> => {
+  const URL = `${YOUTUBE_API_URL}/playlistItems?part=snippet,contentDetails&playlistId=${playlistId}&maxResults=25&key=${
+    process.env.YOUTUBE_API_KEY
+  }${pageToken ? `&pageToken=${pageToken}` : ''}`;
 
   return fetchYoutubeDatas(URL, playlistItemMapper);
 };

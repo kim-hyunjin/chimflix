@@ -14,4 +14,5 @@ export interface PlaylistInfo {
   title: string;
   description: string;
   publishedAt: string;
+  itemCount: number;
 }
