@@ -21,7 +21,6 @@ const useInfiniteScroll = <T extends HTMLElement = HTMLDivElement>(
       observer = new IntersectionObserver((entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            console.log('intersecting...');
             flushSync(() => setIsIntersecting(true));
           }
         });
@@ -39,7 +38,6 @@ const useInfiniteScroll = <T extends HTMLElement = HTMLDivElement>(
       return;
     }
     if (isIntersecting && fetchNextData) {
-      console.log(`let's fetch next data`);
       fetchNextData();
     }
   }, [isIntersecting, isFetching, fetchNextData]);

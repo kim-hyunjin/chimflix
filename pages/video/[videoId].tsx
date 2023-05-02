@@ -55,7 +55,7 @@ const Video = ({ video, stats }: { video: VideoInfo; stats: Stats }) => {
     handleToggleLike,
     handleToggleDislike,
     handleToggleSave,
-    handlePlay,
+    updateWatched,
     updatePlayedTime,
   } = useVideoStatUpdateHandler(stats);
 
@@ -65,6 +65,7 @@ const Video = ({ video, stats }: { video: VideoInfo; stats: Stats }) => {
     return () => {
       if (youtubeRef.current) {
         updatePlayedTime(youtubeRef.current.getCurrentTime());
+        // TODO 영상의 대부분을 시청했다면 watched를 true로 업데이트
       }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -98,9 +99,9 @@ const Video = ({ video, stats }: { video: VideoInfo; stats: Stats }) => {
             },
           }}
           onReady={(e) => (youtubeRef.current = e.target)}
-          onPlay={handlePlay}
           onPause={(e) => {
             updatePlayedTime(e.target.getCurrentTime());
+            // TODO 영상의 대부분을 시청했다면 watched를 true로 업데이트
           }}
         />
 

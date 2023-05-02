@@ -39,10 +39,12 @@ const useVideoStatUpdateHandler = (stats: Stats) => {
     const res = await updateStats({
       videoId: stats.videoId,
       favourited: newFav,
-      watched: true,
+      watched,
       saved,
       playedTime,
     });
+
+    return res;
   };
 
   const handleToggleLike = async () => {
@@ -55,10 +57,12 @@ const useVideoStatUpdateHandler = (stats: Stats) => {
     const res = await updateStats({
       videoId: stats.videoId,
       favourited: newFav,
-      watched: true,
+      watched,
       saved,
       playedTime,
     });
+
+    return res;
   };
 
   const handleToggleSave = async () => {
@@ -72,9 +76,11 @@ const useVideoStatUpdateHandler = (stats: Stats) => {
     });
 
     setSaved(newVal);
+
+    return res;
   };
 
-  const handlePlay = async () => {
+  const updateWatched = async () => {
     if (!watched) {
       const res = await updateStats({
         videoId: stats.videoId,
@@ -85,6 +91,8 @@ const useVideoStatUpdateHandler = (stats: Stats) => {
       });
 
       setWatched(true);
+
+      return res;
     }
   };
 
@@ -98,6 +106,8 @@ const useVideoStatUpdateHandler = (stats: Stats) => {
       playedTime: intTime,
     });
     setPlayedTime(intTime);
+
+    return res;
   };
 
   return {
@@ -107,7 +117,7 @@ const useVideoStatUpdateHandler = (stats: Stats) => {
     handleToggleLike,
     handleToggleDislike,
     handleToggleSave,
-    handlePlay,
+    updateWatched,
     updatePlayedTime,
   };
 };
