@@ -13,7 +13,7 @@ export default async function handler(req: NextApiRequest, resp: NextApiResponse
       req.query.order === 'date' || req.query.order === 'viewCount' ? req.query.order : undefined;
     const pageToken = req.query.pageToken ? String(req.query.pageToken) : undefined;
 
-    if (title && keyword) {
+    if (keyword) {
       const result = await getVideosWithKeyword({
         title,
         keyword,
@@ -22,12 +22,12 @@ export default async function handler(req: NextApiRequest, resp: NextApiResponse
       });
       resp.send(result);
       return;
+    } else {
+      const result = await getVideos({ order, pageToken });
+      resp.send(result);
     }
-
-    const result = await getVideos({ order, pageToken });
-    resp.send(result);
   } catch (error: any) {
-    console.error('Error occurred /stats', error);
+    console.error('Error occurred /search', error);
     resp.status(500).send({ done: false, error: error?.message });
   }
 }

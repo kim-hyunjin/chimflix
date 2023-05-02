@@ -2,35 +2,31 @@ import { YoutubeSnippetsWithPage } from '@/lib/videos';
 
 import { useInfiniteQuery } from '@tanstack/react-query';
 
-const useSearchVideo = ({
+const useFetchVideo = ({
   queryKey,
   initialData,
-  title,
-  searchKeyword,
   order,
 }: {
   queryKey: string;
-  searchKeyword: string;
   initialData?: YoutubeSnippetsWithPage;
-  title?: string;
   order?: 'date' | 'viewCount';
 }) => {
-  const queryResult = useInfiniteQuery<{ title?: string; contents: YoutubeSnippetsWithPage }>(
-    [queryKey, searchKeyword],
+  const queryResult = useInfiniteQuery<YoutubeSnippetsWithPage>(
+    [queryKey],
     async ({ pageParam = null }) => {
       const res = await fetch(
-        `/api/search?order=date&keyword=${searchKeyword}${
-          pageParam ? `&pageToken=${pageParam}` : ''
-        }${title ? `&title=${title}` : ''}${order ? `&order=${order}` : ''}`,
+        `/api/search?order=date${pageParam ? `&pageToken=${pageParam}` : ''}${
+          order ? `&order=${order}` : ''
+        }`,
         { method: 'GET' }
       );
       return await res.json();
     },
     {
-      getNextPageParam: (lastPage) => lastPage.contents.nextPageToken,
+      getNextPageParam: (lastPage) => lastPage.nextPageToken,
       initialData: initialData
         ? {
-            pages: [{ title, contents: initialData }],
+            pages: [initialData],
             pageParams: [null],
           }
         : undefined,
@@ -41,7 +37,7 @@ const useSearchVideo = ({
   const seenItems: Record<string, boolean> = {};
 
   const data = queryResult.data?.pages
-    .flatMap((p) => p.contents.datas)
+    .flatMap((p) => p.datas)
     .filter((el) => {
       if (!el?.id) return false;
       if (seenItems[el.id]) {
@@ -57,4 +53,4 @@ const useSearchVideo = ({
   };
 };
 
-export default useSearchVideo;
+export default useFetchVideo;

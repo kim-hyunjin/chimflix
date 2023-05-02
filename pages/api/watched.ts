@@ -13,7 +13,8 @@ export default async function handler(req: NextApiRequest, resp: NextApiResponse
       return;
     }
 
-    const watched = await getWatchItAgainVideos(token);
+    const offset = req.query.offset;
+    const watched = await getWatchItAgainVideos(token, offset ? Number(offset) : undefined);
     resp.send(watched);
   } catch (error: any) {
     console.error('Error occurred /stats', error);

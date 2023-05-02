@@ -10,47 +10,53 @@ import {
   getVideosWithKeyword,
   YoutubeSnippetsWithPage,
 } from '../lib/videos';
-import { YoutubeSnippet } from '../types/youtube';
-import { useEffect, useState } from 'react';
 
-import useSearchVideo from '@/hooks/query/useSearchVideo';
+import useFetchPlaylist from '@/hooks/query/useFetchPlaylist';
+import useFetchWatched from '@/hooks/query/useFetchWatched';
+import SectionCardsWithKeyword from '@/components/card/SectionCardsWithKeyword';
+import useFetchVideo from '@/hooks/query/useFetchVideo';
 
 type IndexPageServerData = {
   initialRecentVideos: YoutubeSnippetsWithPage;
   initialPopularVideos: YoutubeSnippetsWithPage;
   initialPlaylist: YoutubeSnippetsWithPage;
-  initialOtherContents: { title: string; contents: YoutubeSnippet[] }[];
+  initialOtherContents:
+    | { title: string; keyword: string; contents: YoutubeSnippetsWithPage }[]
+    | null;
 };
 export const getStaticProps: GetStaticProps<IndexPageServerData> = async () => {
-  const [initialRecentVideos, popularVideos, playlist, ...initialOtherContents] = await Promise.all(
-    [
-      getVideos({ order: 'date' }),
-      [], // getVideos({ order: 'viewCount' }),
-      [], // getPlaylists(),
-      // getVideosWithKeyword({ title: '월드컵 모음', keyword: '월드컵' }),
-      // getVideosWithKeyword({
-      //   title: '도라지 도라지 배도라지',
-      //   keyword: '배도라지',
-      // }),
-      // getVideosWithKeyword({ title: '침.철.단', keyword: '침철단' }),
-      // getVideosWithKeyword({ title: '다양한 손님들과', keyword: '초대석' }),
-      // getVideosWithKeyword({ title: '유익함까지 챙기기', keyword: '특강' }),
-    ]
-  );
+  const noData = { datas: [], nextPageToken: null };
 
-  const emptyData: YoutubeSnippetsWithPage = {
-    datas: [],
-    nextPageToken: null,
+  const [initialRecentVideos, initialPopularVideos, initialPlaylist, ...initialOtherContents] =
+    await Promise.allSettled([
+      getVideos({ order: 'date' }),
+      getVideos({ order: 'viewCount' }),
+      getPlaylists(),
+      getVideosWithKeyword({ title: '월드컵 모음', keyword: '월드컵' }),
+      getVideosWithKeyword({
+        title: '도라지 도라지 배도라지',
+        keyword: '배도라지',
+      }),
+      getVideosWithKeyword({ title: '침.철.단', keyword: '침철단' }),
+      getVideosWithKeyword({ title: '다양한 손님들과', keyword: '초대석' }),
+      getVideosWithKeyword({ title: '유익함까지 챙기기', keyword: '특강' }),
+    ]);
+
+  const fulfilledOtherContents = initialOtherContents
+    .filter((c) => c.status === 'fulfilled')
+    .map((f: any) => f.value);
+
+  const props = {
+    initialRecentVideos:
+      initialRecentVideos.status === 'fulfilled' ? initialRecentVideos.value : noData,
+    initialPopularVideos:
+      initialPopularVideos.status === 'fulfilled' ? initialPopularVideos.value : noData,
+    initialPlaylist: initialPlaylist.status === 'fulfilled' ? initialPlaylist.value : noData,
+    initialOtherContents: fulfilledOtherContents.length > 0 ? fulfilledOtherContents : null,
   };
 
-  console.log({ initialRecentVideos });
   return {
-    props: {
-      initialRecentVideos,
-      initialPopularVideos: emptyData,
-      initialPlaylist: emptyData,
-      initialOtherContents,
-    },
+    props,
     revalidate: 60 * 60, // 1hour
   };
 };
@@ -64,25 +70,39 @@ const Home: NextPage<IndexPageServerData> = ({
   const {
     data: recentVideos,
     isFetching: isRecentVideosFetching,
-    hasNextPage: recentVideosHasNextPage,
+    hasNextPage: isRecentVideosHasNextPage,
     fetchNextPage: fetchNextRecentVideos,
-  } = useSearchVideo({
+  } = useFetchVideo({
     queryKey: 'recentVideos',
     initialData: initialRecentVideos,
   });
 
-  console.log({
-    recentVideos,
-    isRecentVideosFetching,
-    recentVideosHasNextPage,
-    fetchNextRecentVideos,
+  const {
+    data: popularVideos,
+    isFetching: isPopularVideoFetching,
+    hasNextPage: isPopularVideoHasNextPage,
+    fetchNextPage: fetchNextPopularVideos,
+  } = useFetchVideo({
+    queryKey: 'popularVideos',
+    initialData: initialPopularVideos,
   });
-  const [watched, setWatched] = useState<YoutubeSnippet[]>([]);
-  // useEffect(() => {
-  //   fetch('/api/watched', { method: 'GET' })
-  //     .then((r) => r.json())
-  //     .then((r) => setWatched(r.watched));
-  // }, []);
+
+  const {
+    data: playlists,
+    isFetching: isPlaylistFetching,
+    hasNextPage: isPlaylistHasNextPage,
+    fetchNextPage: fetchNextPlaylist,
+  } = useFetchPlaylist({
+    queryKey: 'playlists',
+    initialData: initialPlaylist,
+  });
+
+  const {
+    data: watched,
+    isFetching: isWatchedFetching,
+    hasNextPage: isWatchedHasNextPage,
+    fetchNextPage: fetchNextWatched,
+  } = useFetchWatched();
 
   const bannerVideo = initialRecentVideos.datas[0];
   return (
@@ -101,27 +121,57 @@ const Home: NextPage<IndexPageServerData> = ({
         <div className={styles.sectionWrapper}>
           <SectionCards
             title='최신 컨텐츠'
-            datas={recentVideos}
+            datas={recentVideos || []}
             size={'large'}
             type={'video'}
             nextDataFetchOption={{
               isFetching: isRecentVideosFetching,
-              hasNext: recentVideos.length <= 100 && Boolean(recentVideosHasNextPage),
+              hasNext: (recentVideos || []).length <= 100 && Boolean(isRecentVideosHasNextPage),
               fetchNextData: fetchNextRecentVideos,
             }}
           />
-          {/* <SectionCards title='인기 컨텐츠' datas={[]} size={'medium'} type={'video'} />
-          <SectionCards title='플레이리스트' datas={[]} size={'medium'} type={'playlist'} />
-          <SectionCards title='평가한 컨텐츠' datas={watched} size={'medium'} type={'video'} />
-          {initialOtherContents.map((c) => (
-            <SectionCards
+          <SectionCards
+            title='인기 컨텐츠'
+            datas={popularVideos || []}
+            size={'medium'}
+            type={'video'}
+            nextDataFetchOption={{
+              isFetching: isPopularVideoFetching,
+              hasNext: (popularVideos || []).length <= 100 && Boolean(isPopularVideoHasNextPage),
+              fetchNextData: fetchNextPopularVideos,
+            }}
+          />
+          <SectionCards
+            title='플레이리스트'
+            datas={playlists}
+            size={'medium'}
+            type={'playlist'}
+            nextDataFetchOption={{
+              isFetching: isPlaylistFetching,
+              hasNext: Boolean(isPlaylistHasNextPage),
+              fetchNextData: fetchNextPlaylist,
+            }}
+          />
+          <SectionCards
+            title='다시보기'
+            datas={watched}
+            size={'medium'}
+            type={'video'}
+            nextDataFetchOption={{
+              isFetching: isWatchedFetching,
+              hasNext: Boolean(isWatchedHasNextPage),
+              fetchNextData: fetchNextWatched,
+            }}
+          />
+          {initialOtherContents?.map((c) => (
+            <SectionCardsWithKeyword
               key={c.title}
               title={c.title}
-              datas={c.contents}
+              keyword={c.keyword}
+              initialData={c.contents}
               size={'medium'}
-              type={'video'}
             />
-          ))} */}
+          ))}
         </div>
       </div>
     </div>
