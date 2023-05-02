@@ -13,6 +13,14 @@ export const fetchDummyData = (pageToken?: string): YoutubeSnippetsWithPage => {
   }
 };
 
+export const fetchDummyPlaylist = (): YoutubeSnippetsWithPage => {
+  return { datas: dummyPlaylist.json, nextPageToken: '123' };
+};
+
+export const fetchDummyPlaylistItem = (): YoutubeSnippetsWithPage => {
+  return { datas: dummyPlaylistItem[0].json, nextPageToken: '123' };
+};
+
 const dummyData = [
   {
     pageToken: null,
@@ -377,4 +385,234 @@ const dummyData = [
   },
 ];
 
-export default dummyData;
+const dummyPlaylist = {
+  json: [
+    {
+      id: 'PLif_jr7pPZADz0iAZ1K6G3hGbTZk4j82B',
+      imgUrl: 'https://i.ytimg.com/vi/3btkx7wZsrg/hqdefault.jpg',
+      title: '김풍의 일일 DJ',
+      description: '',
+    },
+    {
+      id: 'PLif_jr7pPZACx2rxp38Ljbm4l2N0YyaCs',
+      imgUrl: 'https://i.ytimg.com/vi/JD-TLZvNE9Q/hqdefault.jpg',
+      title: 'GTA 5 (Grand Theft Auto V)',
+      description: '',
+    },
+    {
+      id: 'PLif_jr7pPZADtlx8QIJNJF-6XURHoRO1k',
+      imgUrl: 'https://i.ytimg.com/vi/Wckcfh0Vu_E/hqdefault.jpg',
+      title: '레드 데드 리뎀션 2 (Red Dead Redemption 2)',
+      description: '',
+    },
+    {
+      id: 'PLif_jr7pPZACDdM6sB6Yr_0L0VGXEjF1b',
+      imgUrl: 'https://i.ytimg.com/vi/ysetd_r8Z9M/hqdefault.jpg',
+      title: '2023년 침착맨 정주행',
+      description: '2023년에 나온 침착맨 영상을 정주행으로 즐겨 보세요.',
+    },
+    {
+      id: 'PLif_jr7pPZABUzvHxpGD9IYUDczsRtIPo',
+      imgUrl: 'https://i.ytimg.com/vi/3N4BFRDuY4U/hqdefault.jpg',
+      title: '방랑화가 이병건',
+      description: '21세기 풍속화 그리기',
+    },
+    {
+      id: 'PLif_jr7pPZAB6YJFfAg8riV6NtIOqez6j',
+      imgUrl: 'https://i.ytimg.com/vi/S_RuSVZHZeg/hqdefault.jpg',
+      title: '2018년 침착맨 정주행',
+      description: '2018년에 나온 침착맨 영상을 정주행으로 즐겨 보세요.',
+    },
+    {
+      id: 'PLif_jr7pPZABZsONyeNz1JvpAOxPi8FIs',
+      imgUrl: 'https://i.ytimg.com/vi/-4BvjRGDIAw/hqdefault.jpg',
+      title: '2019년 침착맨 정주행',
+      description: '2019년에 나온 침착맨 영상을 정주행으로 즐겨 보세요.',
+    },
+    {
+      id: 'PLif_jr7pPZACQRnHMrh1kXkIRqaSghyt6',
+      imgUrl: 'https://i.ytimg.com/vi/5BBCy033X-0/hqdefault.jpg',
+      title: '(2022 추석특선) 침투부 같이보기',
+      description: '침&펄 역전재판을 몰아본다.\n그것은 수행의 길.',
+    },
+    {
+      id: 'PLif_jr7pPZAC94waP3RM4wn7QkWGy3zxg',
+      imgUrl: 'https://i.ytimg.com/vi/y0ZWvfCWIhU/hqdefault.jpg',
+      title: '2022 배도라지 MT',
+      description: '',
+    },
+    {
+      id: 'PLif_jr7pPZACSLJuDn8N1j_1jWudgxpi-',
+      imgUrl: 'https://i.ytimg.com/vi/LuJiyc9icSs/hqdefault.jpg',
+      title: '침펄인물사전',
+      description: '침&펄이 직접 인터뷰해서 만드는 인물사전',
+    },
+    {
+      id: 'PLif_jr7pPZADliLF8xwsm7BJHUqq_CUKo',
+      imgUrl: 'https://i.ytimg.com/vi/jCyQVMAfBXk/hqdefault.jpg',
+      title: '2020년 침착맨 정주행',
+      description: '2020년에 나온 침착맨 영상을 정주행으로 즐겨 보세요.',
+    },
+    {
+      id: 'PLif_jr7pPZADJ2MJ-iHlgLijM6xkCaFlo',
+      imgUrl: 'https://i.ytimg.com/vi/sAkEow8H5lA/hqdefault.jpg',
+      title: '2021년 침착맨 정주행',
+      description: '2021년에 나온 침착맨 영상을 정주행으로 즐겨 보세요.',
+    },
+    {
+      id: 'PLif_jr7pPZAD8EJtkFBBctqm5L38JqtGb',
+      imgUrl: 'https://i.ytimg.com/vi/0pw5gBIAWQM/hqdefault.jpg',
+      title: '2022년 침착맨 정주행',
+      description: '2022년에 나온 침착맨 영상을 정주행으로 즐겨 보세요.',
+    },
+    {
+      id: 'PLif_jr7pPZACfoFhBRTYpuhGn9etcTS3n',
+      imgUrl: 'https://i.ytimg.com/vi/PBUBzuGPoVY/hqdefault.jpg',
+      title: '침착맨과 함께 듣는 특강',
+      description: '아는 것이 힘이다?\n모르는 것이 약이다?',
+    },
+    {
+      id: 'PLif_jr7pPZABQ2BIQoX_IG4kJ46hUJJJA',
+      imgUrl: 'https://i.ytimg.com/vi/TQtFOD9q6Ik/hqdefault.jpg',
+      title: '침착맨의 뱉은 말은 지킨다',
+      description: '달면 삼키고 쓰면 뱉는다',
+    },
+    {
+      id: 'PLif_jr7pPZACAXuOjNHP_FDKuOQ30Gj5l',
+      imgUrl: 'https://i.ytimg.com/vi/Kxi0ePKdW84/hqdefault.jpg',
+      title: '침착맨 몰아보기 합본판(合本版)',
+      description: '켜놓고 퍼자기',
+    },
+    {
+      id: 'PLif_jr7pPZAAdgMaA_J4Tqnp4hKF7VlLK',
+      imgUrl: 'https://i.ytimg.com/vi/UDiQvCMne6g/hqdefault.jpg',
+      title: '(2022 설특선) 침투부 같이보기',
+      description: '2022년 설에도 침착맨 정주행을',
+    },
+    {
+      id: 'PLif_jr7pPZADzPWVoN7DMU5uUu5VQJjQK',
+      imgUrl: 'https://i.ytimg.com/vi/uKej8YD7Rlg/hqdefault.jpg',
+      title: '고수를 찾아서',
+      description: '전국 곳곳에 숨어 있는 무술 고수들의 비기를 실사구시한다',
+    },
+    {
+      id: 'PLif_jr7pPZABaIu8PA94k2o3VHAntTAnv',
+      imgUrl: 'https://i.ytimg.com/vi/viPb0y86E4w/hqdefault.jpg',
+      title: '침터뷰 시즌 3: 비대면 인터뷰',
+      description: '',
+    },
+    {
+      id: 'PLif_jr7pPZACEQ8CWYYcC2GDDqsJ2icOv',
+      imgUrl: 'https://i.ytimg.com/vi/WV3KJ-DXKmg/hqdefault.jpg',
+      title: '불만 피우면 쿡방',
+      description: '쿡방이라고 부르면 안되는데 마땅한 명칭을 못찾아서',
+    },
+    {
+      id: 'PLif_jr7pPZABX0GdP7UUVh3rH00SqxCQi',
+      imgUrl: 'https://i.ytimg.com/vi/HbbyfQbJen4/hqdefault.jpg',
+      title: '침착맨 오마카세 모음집',
+      description: '매주 침착맨이 직접 추천한 영상 모음입니다',
+    },
+    {
+      id: 'PLif_jr7pPZADFKlUnXjf3laJyTCZXM0zn',
+      imgUrl: 'https://i.ytimg.com/img/no_thumbnail.jpg',
+      title: '이번주 침착맨 오마카세',
+      description: '침착맨이 직접 선정하는 이번주 추천영상\n(목요일마다 바뀝니다)',
+    },
+    {
+      id: 'PLif_jr7pPZACxsaghi1juPYbkM6UJMxXk',
+      imgUrl: 'https://i.ytimg.com/vi/dang96gloVs/hqdefault.jpg',
+      title: '안될과학 궤도 X 침착맨 과학특강',
+      description: '과학, 어렵지 않아요 (사실 어려움)',
+    },
+    {
+      id: 'PLif_jr7pPZAAl34cbmBXSM7EGIxHUIMD6',
+      imgUrl: 'https://i.ytimg.com/vi/Tr0WHTi6t7Q/hqdefault.jpg',
+      title: '(2021 추석특선) 침투부 클래식',
+      description: '2021년 추석에도 건강하세요',
+    },
+    {
+      id: 'PLif_jr7pPZADR0tmPGmDymr6XDuBvAuWD',
+      imgUrl: 'https://i.ytimg.com/vi/sJNC99aCHkQ/hqdefault.jpg',
+      title: '침착맨의 뿌리를 찾아서',
+      description: '침착맨은 어떻게 살아왔는가',
+    },
+  ],
+};
+
+const dummyPlaylistItem = [
+  {
+    json: [
+      {
+        id: 'ysetd_r8Z9M',
+        title: '침투부 Awards 2022: 한 해를 정리하는 권위없는 시상식',
+        description:
+          '▶관련 영상\n  •침투부 Awards 2021: 한 해를 마무리하며: https://youtu.be/YObxan7RTjw\n\n▶관련 재생목록\n  •침착맨의 일상재롱: https://goo.gl/OJ4Uoa\n\n▶생방송 원본\n  •2022년 12월 29일 방송분: https://youtu.be/XqZsHPUZ24Y\n\n#침착맨 #시상식 #어워즈',
+        imgUrl: 'https://i.ytimg.com/vi/ysetd_r8Z9M/maxresdefault.jpg',
+      },
+      {
+        id: 'NeTqujXzubM',
+        title: '(※소리주의) 솜사탕 만드는 기계',
+        description:
+          '▶관련 재생목록\n  •침착맨의 일상재롱: https://goo.gl/OJ4Uoa\n\n▶생방송 원본\n  •2022년 12월 27일 방송분: https://youtu.be/ERbzDq00Cqk\n\n#침착맨 #솜사탕 #만들기',
+        imgUrl: 'https://i.ytimg.com/vi/NeTqujXzubM/maxresdefault.jpg',
+      },
+      {
+        id: 'RRnO-9xfJY8',
+        title: '많이 먹는 사람과 많이 먹기',
+        description:
+          '▶관련 재생목록\n  •침착맨의 식욕저하 다이어트 먹방: https://url.kr/a4vk8m\n\n▶생방송 원본\n  •2022년 12월 28일 방송분: https://youtu.be/z5bmNIh8730\n\n▶출연\n  •주우재(@todaywoojae), 침착맨\n\n#침착맨 #주우재 #먹방',
+        imgUrl: 'https://i.ytimg.com/vi/RRnO-9xfJY8/maxresdefault.jpg',
+      },
+      {
+        id: 'K6Pfi0yLav8',
+        title: '통닭천사 리즈 시절...｜방랑화가 이병건｜EP.05 서울 강남구',
+        description:
+          '▶촬영 후기와 그림을 감상할 수 있는 방랑화가 이병건 사이버 전시회: https://chimhaha.net/promotion/bangrang\n\n▶관련 재생목록\n  •방랑화가 이병건: https://www.youtube.com/playlist?list=PLif_jr7pPZABUzvHxpGD9IYUDczsRtIPo\n\n▶제작\n  •출연: IVE 리즈(@IVEstarship), 통닭천사( @user-ts7rl8td6u ), 침착맨\n  •기획/연출: 류지명, 한동규, 박지수\n  •조연출: 서주은, 양다연\n\n#침착맨 #통닭천사 #방랑화가이병건 #리즈',
+        imgUrl: 'https://i.ytimg.com/vi/K6Pfi0yLav8/maxresdefault.jpg',
+      },
+      {
+        id: 'SP-LJqVgQuw',
+        title: '[ENG] 뉴진스 초대석',
+        description:
+          '▶관련 재생목록\n  •침착맨의 일상재롱: https://goo.gl/OJ4Uoa\n\n▶생방송 원본\n  •2023년 1월 2일 방송분: https://youtu.be/An_hmZZ3m9g\n\n▶출연\n  •뉴진스(@NewJeans_official), 주우재(@todaywoojae), 침착맨\n\n#침착맨 #뉴진스 #주우재',
+        imgUrl: 'https://i.ytimg.com/vi/SP-LJqVgQuw/maxresdefault.jpg',
+      },
+      {
+        id: 'vO9sb-w1gdY',
+        title: '2023년 또 새롭게 태어난 NEW NEW 침착맨',
+        description:
+          '▶관련 영상\n  •2021년 새롭게 태어난 NEW 침착맨: https://youtu.be/qrWSm3fTao4\n\n▶관련 재생목록\n  •침착맨의 일상재롱: https://goo.gl/OJ4Uoa\n\n▶생방송 원본\n  •2023년 1월 2일 방송분: https://youtu.be/sQFhFXPV5og\n\n한촌설렁탕 - 김치만두 떡만두국: 10,000원\n\n#침착맨 #소통 #동시송출',
+        imgUrl: 'https://i.ytimg.com/vi/vO9sb-w1gdY/maxresdefault.jpg',
+      },
+      {
+        id: 'z_OdvenYnAs',
+        title: '빵으로 벌어지는 연고전',
+        description:
+          '▶관련 재생목록\n  •침착맨의 식욕저하 다이어트 먹방: https://url.kr/a4vk8m\n\n▶생방송 원본\n  •2022년 12월 23일 방송분: https://youtu.be/fGmkFJecCdY\n\n#침착맨 #연대빵 #고대빵',
+        imgUrl: 'https://i.ytimg.com/vi/z_OdvenYnAs/maxresdefault.jpg',
+      },
+      {
+        id: 'L2ZBNP_4m8E',
+        title: '시청자가 알려주는 오토바이 설명회',
+        description:
+          '▶관련 영상\n  •【침착맨】 스쿠터가 위험한 이유: https://youtu.be/7Z96Y6EPm-s\n  •시청자가 알려주는 와인 설명회: https://youtu.be/MBepsQF1viY\n\n▶관련 재생목록\n  •침착맨의 일상재롱: https://goo.gl/OJ4Uoa\n\n▶생방송 원본\n  •2022년 12월 27일 방송분: https://youtu.be/ERbzDq00Cqk\n\n#침착맨 #오토바이 #설명회',
+        imgUrl: 'https://i.ytimg.com/vi/L2ZBNP_4m8E/maxresdefault.jpg',
+      },
+      {
+        id: 'QAlkUzhL03U',
+        title: '고등어 솥밥과 슬램덩크 개혁안',
+        description:
+          '▶관련 영상\n  •순두부는 왜 뚝배기에 나와야 하는가?: https://youtu.be/wIrnA4tTGNU\n\n▶관련 재생목록\n  •침착맨의 식욕저하 다이어트 먹방: https://url.kr/a4vk8m\n\n▶생방송 원본\n  •2022년 12월 27일 방송분: https://youtu.be/ERbzDq00Cqk\n\n온가솥밥 - 직화 고등어 구이 솥밥: 10,900원\n\n#침착맨 #솥밥 #먹방',
+        imgUrl: 'https://i.ytimg.com/vi/QAlkUzhL03U/maxresdefault.jpg',
+      },
+      {
+        id: 'za_EbAThN1A',
+        title: '침착맨이 로마군 소대장이 된다면',
+        description:
+          '▶관련 재생목록\n  •침착맨의 짧게 한 게임들: https://youtube.com/playlist?list=PLif_jr7pPZACiQw3uIILLjASbbGKOS-u2\n\n▶생방송 원본\n  •2022년 12월 27일 방송분: https://youtu.be/ERbzDq00Cqk\n\n#침착맨 #쉴드월 #로마',
+        imgUrl: 'https://i.ytimg.com/vi/za_EbAThN1A/maxresdefault.jpg',
+      },
+    ],
+  },
+];

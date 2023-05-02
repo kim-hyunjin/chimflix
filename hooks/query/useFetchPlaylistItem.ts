@@ -2,19 +2,24 @@ import { YoutubeSnippetsWithPage } from '@/lib/videos';
 
 import { useInfiniteQuery } from '@tanstack/react-query';
 
-const useFetchPlaylist = ({
+const useFetchPlaylistItem = ({
   queryKey,
+  playlistId,
   initialData,
 }: {
   queryKey: string;
+  playlistId: string;
   initialData: YoutubeSnippetsWithPage;
 }) => {
   const queryResult = useInfiniteQuery<YoutubeSnippetsWithPage>(
-    [queryKey],
+    [queryKey, playlistId],
     async ({ pageParam = null }) => {
-      const res = await fetch(`/api/playlist${pageParam ? `?pageToken=${pageParam}` : ''}`, {
-        method: 'GET',
-      });
+      const res = await fetch(
+        `/api/playlistItems?id=${playlistId}${pageParam ? `&pageToken=${pageParam}` : ''}`,
+        {
+          method: 'GET',
+        }
+      );
       return await res.json();
     },
     {
@@ -46,4 +51,4 @@ const useFetchPlaylist = ({
   };
 };
 
-export default useFetchPlaylist;
+export default useFetchPlaylistItem;

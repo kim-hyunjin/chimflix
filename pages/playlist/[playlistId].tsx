@@ -14,6 +14,8 @@ import { PlaylistInfo, YoutubeSnippet } from '@/types/youtube';
 import { GetStaticProps } from 'next';
 import NavBar from '@/components/nav/Navbar';
 import VideoList from '@/components/videos/VideoList';
+import useFetchPlaylistItem from '@/hooks/query/useFetchPlaylistItem';
+import useInfiniteScroll from '@/hooks/useInfiniteScroll';
 
 Modal.setAppElement('#__next');
 
@@ -24,6 +26,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 
   return {
     props: {
+      playlistId,
       videos,
       playlistInfo,
     },
@@ -42,12 +45,22 @@ export async function getStaticPaths() {
 }
 
 const Video = ({
+  playlistId,
   videos,
   playlistInfo,
 }: {
+  playlistId: string;
   videos: YoutubeSnippetsWithPage;
   playlistInfo: PlaylistInfo | null;
 }) => {
+  const { data, isFetching, hasNextPage, fetchNextPage } = useFetchPlaylistItem({
+    queryKey: 'playlistItems',
+    playlistId,
+    initialData: videos,
+  });
+
+  const { setTargeEl } = useInfiniteScroll(isFetching, fetchNextPage);
+
   const router = useRouter();
 
   const handleClose = useCallback(() => {
@@ -56,7 +69,7 @@ const Video = ({
 
   if (!playlistInfo) throw new Error('playlist 정보가 없습니다.');
 
-  const { title, description, publishedAt, itemCount } = playlistInfo;
+  const { title, description, publishedAt } = playlistInfo;
 
   return (
     <div className={styles.container}>
@@ -84,14 +97,9 @@ const Video = ({
               <p className={styles.title}>{title}</p>
               <p className={styles.description}>{description}</p>
             </div>
-            <div className={styles.col2}>
-              <p className={clsx(styles.subText, styles.subTextWrapper)}>
-                <span className={styles.labelText}>에피소드: </span>
-                <span className={styles.valueText}>{itemCount}개</span>
-              </p>
-            </div>
           </div>
-          <VideoList videos={videos.datas} />
+          <VideoList videos={data} />
+          {hasNextPage && <div ref={setTargeEl}></div>}
         </div>
       </Modal>
     </div>

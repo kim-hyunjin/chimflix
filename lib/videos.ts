@@ -1,4 +1,8 @@
-import { fetchDummyData } from '@/fixture/dummyVideoData';
+import {
+  fetchDummyData,
+  fetchDummyPlaylist,
+  fetchDummyPlaylistItem,
+} from '@/fixture/dummyVideoData';
 import { YoutubeSnippet, VideoInfo, PlaylistInfo } from '../types/youtube';
 import { getWatchedVideos } from './db/hasura';
 import { getIssuerFromToken } from './token';
@@ -115,9 +119,9 @@ export const getVideosWithKeyword = async ({
  * /playlists
  */
 export const getPlaylists = (pageToken?: string): Promise<YoutubeSnippetsWithPage> => {
-  if (process.env.NODE_ENV !== 'production') {
+  if (process.env.NODE_ENV === 'production') {
     return new Promise((res) => {
-      res(fetchDummyData(pageToken));
+      res(fetchDummyPlaylist());
     });
   }
 
@@ -135,15 +139,14 @@ export const getPlaylistDetail = async (playlistId: string): Promise<PlaylistInf
     const data = (await fetchYoutubeDatas(URL)).datas[0];
 
     const { title, description, publishedAt } = data.snippet;
-    const itemCount = data.contentDetails.itemCount;
 
     return {
       title,
       description,
       publishedAt: new Date(publishedAt).getFullYear().toString(),
-      itemCount,
     };
   } catch (e) {
+    console.error(e);
     return null;
   }
 };
@@ -187,7 +190,12 @@ export const getPlaylistItems = async (
   playlistId: string,
   pageToken?: string
 ): Promise<YoutubeSnippetsWithPage> => {
-  const URL = `${YOUTUBE_API_URL}/playlistItems?part=snippet,contentDetails&playlistId=${playlistId}&maxResults=25&key=${
+  if (process.env.NODE_ENV === 'production') {
+    return new Promise((res) => {
+      res(fetchDummyPlaylistItem());
+    });
+  }
+  const URL = `${YOUTUBE_API_URL}/playlistItems?part=snippet,contentDetails&playlistId=${playlistId}&maxResults=10&key=${
     process.env.YOUTUBE_API_KEY
   }${pageToken ? `&pageToken=${pageToken}` : ''}`;
 
