@@ -119,7 +119,7 @@ export const getVideosWithKeyword = async ({
  * /playlists
  */
 export const getPlaylists = (pageToken?: string): Promise<YoutubeSnippetsWithPage> => {
-  if (process.env.NODE_ENV === 'production') {
+  if (process.env.NODE_ENV !== 'production') {
     return new Promise((res) => {
       res(fetchDummyPlaylist());
     });
@@ -190,7 +190,7 @@ export const getPlaylistItems = async (
   playlistId: string,
   pageToken?: string
 ): Promise<YoutubeSnippetsWithPage> => {
-  if (process.env.NODE_ENV === 'production') {
+  if (process.env.NODE_ENV !== 'production') {
     return new Promise((res) => {
       res(fetchDummyPlaylistItem());
     });
