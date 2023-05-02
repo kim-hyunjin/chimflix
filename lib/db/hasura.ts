@@ -101,13 +101,16 @@ const operationsDoc = `
   }
 
   query WatchedVideos($userId: String!, $offset: Int!) {
-    stats_aggregate(order_by: {id: desc}, limit: 10, offset: $offset, where: {
+    stats(order_by: {id: desc}, limit: 25, offset: $offset, where: {
       watched: {_eq: true}, 
-      userId: {_eq: $userId},
+      userId: {_eq: $userId}
     }) {
-      nodes {
-        videoId
-      }
+      videoId
+    }
+    stats_aggregate(where: {
+      watched: {_eq: true}, 
+      userId: {_eq: $userId}
+    }) {
       aggregate {
         count
       }
@@ -115,13 +118,27 @@ const operationsDoc = `
   }
 
   query SavedVideos($userId: String!, $offset: Int!) {
-    stats_aggregate(order_by: {id: desc}, limit: 25, offset: $offset, where: {
+    stats(order_by: {id: desc}, limit: 25, offset: $offset, where: {
       userId: {_eq: $userId}, 
       saved: {_eq: true}
     }) {
-      nodes {
-        videoId
+      videoId
+    }
+    stats_aggregate(where: {
+      userId: {_eq: $userId}, 
+      saved: {_eq: true}
+    }) {
+      aggregate {
+        count
       }
+    }
+  }
+
+  query WatchingVideos($userId: String!, $offset: Int!) {
+    stats(where: {userId: {_eq: $userId}, playedTime: {_gt: 0}, watched: {_eq: false}}, limit: 25, offset: $offset) {
+      videoId
+    }
+    stats_aggregate(where: {userId: {_eq: $userId}, playedTime: {_gt: 0}, watched: {_eq: false}}) {
       aggregate {
         count
       }
@@ -201,7 +218,7 @@ export async function getWatchedVideos(
     token
   );
   if (res?.data?.stats_aggregate) {
-    const watched = res.data.stats_aggregate.nodes.map((s: any) => ({
+    const watched = res.data.stats.map((s: any) => ({
       id: s.videoId,
       imgUrl: `https://i.ytimg.com/vi/${s.videoId}/maxresdefault.jpg`,
     }));
@@ -215,7 +232,17 @@ export async function getWatchedVideos(
   return undefined;
 }
 
-export async function getSavedVideos(token: string, issuer: string, offset: number = 0) {
+export async function getSavedVideos(
+  token: string,
+  issuer: string,
+  offset: number = 0
+): Promise<
+  | {
+      saved: { id: string; imgUrl: string }[];
+      total: number;
+    }
+  | undefined
+> {
   const res = await fetchGraphQL(
     operationsDoc,
     'SavedVideos',
@@ -227,13 +254,49 @@ export async function getSavedVideos(token: string, issuer: string, offset: numb
   );
 
   if (res?.data?.stats_aggregate) {
-    const saved = res.data.stats_aggregate.nodes.map((video: any) => ({
+    const saved = res.data.stats.map((video: any) => ({
       id: video.videoId,
       imgUrl: `https://i.ytimg.com/vi/${video.videoId}/maxresdefault.jpg`,
     }));
     const total = res.data.stats_aggregate.aggregate.count;
     return {
       saved,
+      total,
+    };
+  }
+
+  return undefined;
+}
+
+export async function getWatchingNowVideos(
+  token: string,
+  issuer: string,
+  offset: number = 0
+): Promise<
+  | {
+      watching: { id: string; imgUrl: string }[];
+      total: number;
+    }
+  | undefined
+> {
+  const res = await fetchGraphQL(
+    operationsDoc,
+    'WatchingVideos',
+    {
+      userId: issuer,
+      offset,
+    },
+    token
+  );
+
+  if (res?.data?.stats_aggregate) {
+    const watching = res.data.stats.map((video: any) => ({
+      id: video.videoId,
+      imgUrl: `https://i.ytimg.com/vi/${video.videoId}/maxresdefault.jpg`,
+    }));
+    const total = res.data.stats_aggregate.aggregate.count;
+    return {
+      watching,
       total,
     };
   }

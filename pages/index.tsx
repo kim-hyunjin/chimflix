@@ -15,6 +15,8 @@ import useFetchPlaylist from '@/hooks/query/useFetchPlaylist';
 import useFetchWatched from '@/hooks/query/useFetchWatched';
 import SectionCardsWithKeyword from '@/components/card/SectionCardsWithKeyword';
 import useFetchVideo from '@/hooks/query/useFetchVideo';
+import useFetchSaved from '@/hooks/query/useFetchSaved';
+import useFetchWatchingNow from '@/hooks/query/useFetchWatchingNow';
 
 type IndexPageServerData = {
   initialRecentVideos: YoutubeSnippetsWithPage;
@@ -104,6 +106,20 @@ const Home: NextPage<IndexPageServerData> = ({
     fetchNextPage: fetchNextWatched,
   } = useFetchWatched();
 
+  const {
+    data: saved,
+    isFetching: isSavedFetching,
+    hasNextPage: isSavedHasNextPage,
+    fetchNextPage: fetchNextSaved,
+  } = useFetchSaved();
+
+  const {
+    data: watching,
+    isFetching: isWatchingNowFetching,
+    hasNextPage: isWatchingNowHasNextPage,
+    fetchNextPage: fetchNextWatchingNow,
+  } = useFetchWatchingNow();
+
   const bannerVideo = initialRecentVideos.datas[0];
   return (
     <div className={styles.container}>
@@ -119,6 +135,17 @@ const Home: NextPage<IndexPageServerData> = ({
           <Banner videoId={bannerVideo.id} title={bannerVideo.title} imgUrl={bannerVideo.imgUrl} />
         )}
         <div className={styles.sectionWrapper}>
+          <SectionCards
+            title='시청중인 컨텐츠'
+            datas={watching}
+            size={'large'}
+            type={'video'}
+            nextDataFetchOption={{
+              isFetching: isWatchingNowFetching,
+              hasNext: Boolean(isWatchingNowHasNextPage),
+              fetchNextData: fetchNextWatchingNow,
+            }}
+          />
           <SectionCards
             title='최신 컨텐츠'
             datas={recentVideos || []}
@@ -139,6 +166,17 @@ const Home: NextPage<IndexPageServerData> = ({
               isFetching: isPopularVideoFetching,
               hasNext: (popularVideos || []).length <= 100 && Boolean(isPopularVideoHasNextPage),
               fetchNextData: fetchNextPopularVideos,
+            }}
+          />
+          <SectionCards
+            title='내가 찜한 컨텐츠'
+            datas={saved}
+            size={'medium'}
+            type={'video'}
+            nextDataFetchOption={{
+              isFetching: isSavedFetching,
+              hasNext: Boolean(isSavedHasNextPage),
+              fetchNextData: fetchNextSaved,
             }}
           />
           <SectionCards

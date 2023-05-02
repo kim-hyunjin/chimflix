@@ -64,8 +64,11 @@ const Video = ({ video, stats }: { video: VideoInfo; stats: Stats }) => {
   useEffect(() => {
     return () => {
       if (youtubeRef.current) {
-        updatePlayedTime(youtubeRef.current.getCurrentTime());
-        // TODO 영상의 대부분을 시청했다면 watched를 true로 업데이트
+        const currentTime = youtubeRef.current.getCurrentTime();
+        updatePlayedTime(currentTime);
+        if (youtubeRef.current.playerInfo.duration - currentTime < 30) {
+          updateWatched();
+        }
       }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -100,8 +103,12 @@ const Video = ({ video, stats }: { video: VideoInfo; stats: Stats }) => {
           }}
           onReady={(e) => (youtubeRef.current = e.target)}
           onPause={(e) => {
-            updatePlayedTime(e.target.getCurrentTime());
-            // TODO 영상의 대부분을 시청했다면 watched를 true로 업데이트
+            const currentTime = e.target.getCurrentTime();
+            updatePlayedTime(currentTime);
+
+            if (e.target.playerInfo.duration - currentTime < 30) {
+              updateWatched();
+            }
           }}
         />
 
