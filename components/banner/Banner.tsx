@@ -12,7 +12,7 @@ const Banner = (props: { videoId: string; title: string; imgUrl: string }) => {
     router.push(`video/${videoId}`);
   };
 
-  const replacedTitle = title.replaceAll('&amp;', '&');
+  const replacedTitle = title.replaceAll('&amp;', '&').replaceAll('&#39;', `'`);
   return (
     <div className={styles.container}>
       <div className={styles.leftWrapper}>
