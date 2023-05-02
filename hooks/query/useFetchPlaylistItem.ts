@@ -8,7 +8,7 @@ const useFetchPlaylistItem = ({
   initialData,
 }: {
   queryKey: string;
-  playlistId: string;
+  playlistId: string | null;
   initialData: YoutubeSnippetsWithPage;
 }) => {
   const queryResult = useInfiniteQuery<YoutubeSnippetsWithPage>(
@@ -23,12 +23,13 @@ const useFetchPlaylistItem = ({
       return await res.json();
     },
     {
-      getNextPageParam: (lastPage) => lastPage.nextPageToken,
+      getNextPageParam: (lastPage) => lastPage?.nextPageToken || null,
       initialData: {
         pages: [initialData],
         pageParams: [null],
       },
       refetchOnWindowFocus: false,
+      enabled: playlistId !== null,
     }
   );
 

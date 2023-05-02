@@ -20,6 +20,17 @@ import useInfiniteScroll from '@/hooks/useInfiniteScroll';
 Modal.setAppElement('#__next');
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
+  if (!params?.playlistId) {
+    const noData = { datas: [], nextPageToken: null };
+
+    return {
+      props: {
+        playlistId: null,
+        videos: noData,
+        playlistInfo: noData,
+      },
+    };
+  }
   const playlistId = String(params?.playlistId);
   const videos: YoutubeSnippetsWithPage = await getPlaylistItems(playlistId);
   const playlistInfo: PlaylistInfo | null = await getPlaylistDetail(playlistId);
@@ -30,7 +41,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
       videos,
       playlistInfo,
     },
-    revalidate: 60 * 30, // 30min
+    revalidate: 60 * 60 * 24, // 1 day
   };
 };
 
@@ -49,7 +60,7 @@ const Video = ({
   videos,
   playlistInfo,
 }: {
-  playlistId: string;
+  playlistId: string | null;
   videos: YoutubeSnippetsWithPage;
   playlistInfo: PlaylistInfo | null;
 }) => {
