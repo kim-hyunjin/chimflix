@@ -113,6 +113,20 @@ const operationsDoc = `
       }
     }
   }
+
+  query SavedVideos($userId: String!, $offset: Int!) {
+    stats_aggregate(order_by: {id: desc}, limit: 25, offset: $offset, where: {
+      userId: {_eq: $userId}, 
+      saved: {_eq: true}
+    }) {
+      nodes {
+        videoId
+      }
+      aggregate {
+        count
+      }
+    }
+  }
 `;
 
 export async function isNewUser(token: string, issuer: string) {
@@ -199,5 +213,32 @@ export async function getWatchedVideos(
       total,
     };
   }
+  return undefined;
+}
+
+export async function getSavedVideos(token: string, issuer: string, offset: number = 0) {
+  const res = await fetchGraphQL(
+    operationsDoc,
+    'SavedVideos',
+    {
+      userId: issuer,
+      offset,
+    },
+    token
+  );
+  console.log(res);
+
+  if (res?.data?.stats_aggregate) {
+    const saved = res.data.stats_aggregate.nodes.map((video: any) => ({
+      id: video.videoId,
+      imgUrl: `https://i.ytimg.com/vi/${video.videoId}/maxresdefault.jpg`,
+    }));
+    const total = res.data.stats_aggregate.aggregate.count;
+    return {
+      saved,
+      total,
+    };
+  }
+
   return undefined;
 }

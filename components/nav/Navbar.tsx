@@ -8,6 +8,7 @@ import { MouseEventHandler, useCallback, useState, useEffect } from 'react';
 
 import { magic } from '@/lib/magic-client';
 import { useRouter } from 'next/router';
+import { removeTokenCookie } from '@/lib/cookies';
 
 const NavBar = () => {
   const [showDropdown, setShowDropdown] = useState(false);
@@ -31,6 +32,7 @@ const NavBar = () => {
       if (!magic) return;
       try {
         await magic.user.logout();
+        removeTokenCookie();
         router.push('/login');
       } catch (err) {
         router.push('/login');
@@ -56,6 +58,11 @@ const NavBar = () => {
           <li className={styles.navItem}>
             <Link href={'/'}>
               <a>Home</a>
+            </Link>
+          </li>
+          <li className={styles.navItem}>
+            <Link href={'/browse/my-list'}>
+              <a>My List</a>
             </Link>
           </li>
         </ul>

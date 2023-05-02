@@ -13,3 +13,13 @@ export const setTokenCookie = (token: string, res: NextApiResponse) => {
 
   res.setHeader('Set-Cookie', serializedCookie);
 };
+
+export const removeTokenCookie = () => {
+  const val = cookie.serialize('token', '', {
+    maxAge: -1,
+    path: '/',
+  });
+  if (document) {
+    document.cookie = val;
+  }
+};

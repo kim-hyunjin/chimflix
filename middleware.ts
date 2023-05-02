@@ -14,5 +14,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/', '/video/:path*', '/playlist/:path*'],
+  matcher: ['/', '/video/:path*', '/playlist/:path*', '/browse/my-list'],
 };
