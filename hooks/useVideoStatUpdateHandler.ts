@@ -14,7 +14,6 @@ const updateStats = async (newStats: {
   saved: boolean;
   playedTime: number;
 }): Promise<Stats> => {
-  console.log({ newStats });
   const res = await fetch('/api/stats', {
     method: 'POST',
     body: JSON.stringify(newStats),
@@ -44,7 +43,6 @@ const useVideoStatUpdateHandler = (stats: Stats) => {
       saved,
       playedTime,
     });
-    console.log('updated', res);
   };
 
   const handleToggleLike = async () => {
@@ -61,8 +59,6 @@ const useVideoStatUpdateHandler = (stats: Stats) => {
       saved,
       playedTime,
     });
-
-    console.log('updated', res);
   };
 
   const handleToggleSave = async () => {
@@ -74,14 +70,12 @@ const useVideoStatUpdateHandler = (stats: Stats) => {
       saved: newVal,
       playedTime,
     });
-    console.log('updated', res);
 
     setSaved(newVal);
   };
 
   const handlePlay = async () => {
     if (!watched) {
-      console.log('lets play stats update');
       const res = await updateStats({
         videoId: stats.videoId,
         favourited,
@@ -89,7 +83,6 @@ const useVideoStatUpdateHandler = (stats: Stats) => {
         saved,
         playedTime,
       });
-      console.log('updated', res);
 
       setWatched(true);
     }
@@ -104,7 +97,6 @@ const useVideoStatUpdateHandler = (stats: Stats) => {
       saved,
       playedTime: intTime,
     });
-    console.log('updated', res);
     setPlayedTime(intTime);
   };
 

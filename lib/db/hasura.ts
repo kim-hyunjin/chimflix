@@ -200,7 +200,6 @@ export async function getWatchedVideos(
     },
     token
   );
-  console.log(res?.data?.stats_aggregate);
   if (res?.data?.stats_aggregate) {
     const watched = res.data.stats_aggregate.nodes.map((s: any) => ({
       id: s.videoId,
@@ -226,7 +225,6 @@ export async function getSavedVideos(token: string, issuer: string, offset: numb
     },
     token
   );
-  console.log(res);
 
   if (res?.data?.stats_aggregate) {
     const saved = res.data.stats_aggregate.nodes.map((video: any) => ({

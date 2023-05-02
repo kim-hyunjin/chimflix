@@ -25,7 +25,6 @@ export const getServerSideProps: GetServerSideProps = async ({ params, req }) =>
   const token = String(req.cookies.token);
 
   const [video, stats] = await Promise.all([getVideoDetail(videoId), getStatsData(token, videoId)]);
-  console.log({ video, stats });
 
   if (stats) {
     return {
@@ -37,7 +36,6 @@ export const getServerSideProps: GetServerSideProps = async ({ params, req }) =>
   }
 
   const newStats = await createNewStats(token, videoId);
-  console.log({ newStats });
   return {
     props: {
       video,
