@@ -34,7 +34,7 @@ const useFetchWatched = () => {
   const seenItems: Record<string, boolean> = {};
   const data =
     queryResult.data?.pages
-      .flatMap((p) => p.watched)
+      .flatMap((p) => (p ? p.watched : []))
       .filter((el) => {
         if (!el?.id) return false;
         if (seenItems[el.id]) {

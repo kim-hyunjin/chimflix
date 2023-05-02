@@ -29,14 +29,18 @@ const useFetchPlaylistItem = ({
         pageParams: [null],
       },
       refetchOnWindowFocus: false,
-      enabled: playlistId !== null,
+      enabled: playlistId !== null && playlistId !== undefined,
     }
   );
+
+  // if (queryResult.isSuccess && queryResult.data?.pages) {
+
+  // }
 
   const seenItems: Record<string, boolean> = {};
   const data =
     queryResult.data?.pages
-      .flatMap((p) => p.datas)
+      .flatMap((p) => (p ? p.datas : []))
       .filter((el) => {
         if (!el?.id) return false;
         if (seenItems[el.id]) {

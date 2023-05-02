@@ -31,7 +31,7 @@ const useFetchWatchingNow = (initialData?: { watching: YoutubeSnippet[]; total: 
   const seenItems: Record<string, boolean> = {};
   const data =
     queryResult.data?.pages
-      .flatMap((p) => p.watching)
+      .flatMap((p) => (p ? p.watching : []))
       .filter((el) => {
         if (!el?.id) return false;
         if (seenItems[el.id]) {

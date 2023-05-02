@@ -21,19 +21,22 @@ Modal.setAppElement('#__next');
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
   if (!params?.playlistId) {
-    const noData = { datas: [], nextPageToken: null };
-
     return {
-      props: {
-        playlistId: null,
-        videos: noData,
-        playlistInfo: noData,
+      redirect: {
+        destination: '/',
+        permanent: false,
       },
     };
   }
   const playlistId = String(params?.playlistId);
   const videos: YoutubeSnippetsWithPage = await getPlaylistItems(playlistId);
   const playlistInfo: PlaylistInfo | null = await getPlaylistDetail(playlistId);
+
+  if (!playlistInfo) {
+    return {
+      notFound: true,
+    };
+  }
 
   return {
     props: {
@@ -62,7 +65,7 @@ const Video = ({
 }: {
   playlistId: string | null;
   videos: YoutubeSnippetsWithPage;
-  playlistInfo: PlaylistInfo | null;
+  playlistInfo: PlaylistInfo;
 }) => {
   const { data, isFetching, hasNextPage, fetchNextPage } = useFetchPlaylistItem({
     queryKey: 'playlistItems',
@@ -78,7 +81,10 @@ const Video = ({
     router.push('/');
   }, [router]);
 
-  if (!playlistInfo) throw new Error('playlist 정보가 없습니다.');
+  // 빌드시 에러가 나므로 아래 코드 필요..
+  if (!playlistInfo) {
+    return null;
+  }
 
   const { title, description, publishedAt } = playlistInfo;
 

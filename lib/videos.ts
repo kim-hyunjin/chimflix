@@ -199,7 +199,16 @@ export const getPlaylistItems = async (
     process.env.YOUTUBE_API_KEY
   }${pageToken ? `&pageToken=${pageToken}` : ''}`;
 
-  return fetchYoutubeDatas(URL, playlistItemMapper);
+  try {
+    const fetchResult = await fetchYoutubeDatas(URL, playlistItemMapper);
+    // console.log({ fetchResult });
+    return fetchResult;
+  } catch (e) {
+    return {
+      datas: [],
+      nextPageToken: null,
+    };
+  }
 };
 
 export const getWatchItAgainVideos = async (
