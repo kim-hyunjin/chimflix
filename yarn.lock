@@ -2833,6 +2833,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"jotai@npm:^2.0.4":
+  version: 2.0.4
+  resolution: "jotai@npm:2.0.4"
+  peerDependencies:
+    react: ">=17.0.0"
+  peerDependenciesMeta:
+    react:
+      optional: true
+  checksum: 8e32fa126ef18850a1ac9c25e1260bebf0cb79c704ed9c564236904c0a5f28064de9b6a901c395dfbf2aa47f5ae7600ae97e3acadcc79778eda94d92da3a0ded
+  languageName: node
+  linkType: hard
+
 "js-sdsl@npm:^4.1.4":
   version: 4.1.4
   resolution: "js-sdsl@npm:4.1.4"
@@ -4918,6 +4930,7 @@ __metadata:
     eslint: 8.23.1
     eslint-config-next: 12.3.0
     framer-motion: ^7.6.4
+    jotai: ^2.0.4
     jsonwebtoken: ^9.0.0
     magic-sdk: ^13.3.0
     next: 12.3.0

@@ -35,6 +35,7 @@ const useSearchVideo = ({
           }
         : undefined,
       refetchOnWindowFocus: false,
+      enabled: searchKeyword !== '',
     }
   );
 
