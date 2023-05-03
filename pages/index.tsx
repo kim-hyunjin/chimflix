@@ -17,6 +17,12 @@ import SectionCardsWithKeyword from '@/components/card/SectionCardsWithKeyword';
 import useFetchVideo from '@/hooks/query/useFetchVideo';
 import useFetchSaved from '@/hooks/query/useFetchSaved';
 import useFetchWatchingNow from '@/hooks/query/useFetchWatchingNow';
+import useGlobalSearch from '@/hooks/query/useGlobalSearch';
+import { globalSearchKeyword } from '@/state';
+
+import { useAtom } from 'jotai';
+import { ReactNode } from 'react';
+import NoData from '@/components/error/NoData';
 
 type IndexPageServerData = {
   initialRecentVideos: YoutubeSnippetsWithPage;
@@ -120,17 +126,18 @@ const Home: NextPage<IndexPageServerData> = ({
     fetchNextPage: fetchNextWatchingNow,
   } = useFetchWatchingNow();
 
-  const bannerVideo = initialRecentVideos.datas[0];
-  return (
-    <div className={styles.container}>
-      <Head>
-        <title>Chimflix</title>
-        <meta name='description' content='침플릭스 chimflix - 침착맨을 위한 넷플릭스' />
-        <link rel='icon' href='/favicon.ico' />
-      </Head>
+  const [gsk] = useAtom(globalSearchKeyword);
+  const {
+    data: globalSearchResult,
+    isFetching: isGlobalSearchFetching,
+    hasNextPage: isGlobalSearchHasNextPage,
+    fetchNextPage: fetchNextGlobalSearch,
+  } = useGlobalSearch();
 
-      <div className={styles.main}>
-        <NavBar />
+  const bannerVideo = initialRecentVideos.datas[0];
+  if (gsk === '') {
+    return (
+      <Layout>
         {bannerVideo && (
           <Banner videoId={bannerVideo.id} title={bannerVideo.title} imgUrl={bannerVideo.imgUrl} />
         )}
@@ -211,6 +218,51 @@ const Home: NextPage<IndexPageServerData> = ({
             />
           ))}
         </div>
+      </Layout>
+    );
+  }
+  if (globalSearchResult && globalSearchResult.length > 0) {
+    return (
+      <Layout>
+        <div className={styles.sectionWrapperWithoutBanner}>
+          <SectionCards
+            title=''
+            datas={globalSearchResult}
+            size='small'
+            type='video'
+            shouldWrap={true}
+            nextDataFetchOption={{
+              isFetching: isGlobalSearchFetching,
+              hasNext: Boolean(isGlobalSearchHasNextPage),
+              fetchNextData: fetchNextGlobalSearch,
+            }}
+          />
+        </div>
+      </Layout>
+    );
+  }
+
+  return (
+    <Layout>
+      <div className={styles.sectionWrapper}>
+        <NoData />
+      </div>
+    </Layout>
+  );
+};
+
+const Layout = ({ children }: { children: ReactNode }) => {
+  return (
+    <div className={styles.container}>
+      <Head>
+        <title>Chimflix</title>
+        <meta name='description' content='침플릭스 chimflix - 침착맨을 위한 넷플릭스' />
+        <link rel='icon' href='/favicon.ico' />
+      </Head>
+
+      <div className={styles.main}>
+        <NavBar />
+        {children}
       </div>
     </div>
   );

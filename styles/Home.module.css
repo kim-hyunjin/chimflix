@@ -5,6 +5,10 @@
   margin-top: 1.5rem;
 }
 
+.sectionWrapperWithoutBanner {
+  margin-top: 6rem;
+}
+
 .main {
   padding-bottom: 4rem;
 }
