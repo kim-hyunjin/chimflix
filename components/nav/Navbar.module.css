@@ -68,10 +68,7 @@
 }
 
 .usernameBtn {
-  display: flex;
-  align-items: center;
-  overflow: hidden;
-  color: var(--white);
+  width: 1.6rem;
 }
 
 .username {

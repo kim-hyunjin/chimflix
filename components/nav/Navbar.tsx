@@ -10,7 +10,7 @@ import { magic } from '@/lib/magic-client';
 import { useRouter } from 'next/router';
 import { checkTokenExist, removeTokenCookie } from '@/lib/cookies';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
+import { faMagnifyingGlass, faUser } from '@fortawesome/free-solid-svg-icons';
 
 import { motion } from 'framer-motion';
 import useDebounceEffect from '@/hooks/useDebounceEffect';
@@ -98,15 +98,10 @@ const NavBar = () => {
           <Logo />
           <div className={styles.navWrapper}>
             <ul className={styles.navItems}>
-              <li className={styles.navItem}>
-                <Link href={'/'}>
-                  <a>Home</a>
-                </Link>
-              </li>
               {mounted && isLoggedIn && (
                 <li className={styles.navItem}>
                   <Link href={'/browse/my-list'}>
-                    <a>My List</a>
+                    <a>내가 찜한 컨텐츠</a>
                   </Link>
                 </li>
               )}
@@ -138,18 +133,17 @@ const NavBar = () => {
               {mounted && isLoggedIn && (
                 <div>
                   <button className={styles.usernameBtn} onClick={handleShowDropdown}>
-                    <p className={styles.username}>{username}</p>
-                    <Image
-                      src='/static/expand_more.svg'
-                      alt='Expand more'
-                      width='24px'
-                      height='24px'
-                    />
+                    <FontAwesomeIcon icon={faUser} style={{ color: '#ffffff' }} />
                   </button>
 
                   {showDropdown && (
                     <div className={styles.navDropdown}>
                       <div>
+                        <p className={styles.username}>{username}</p>
+                        <Link href={'/browse/my-list'}>
+                          <a>My List</a>
+                        </Link>
+
                         <a className={styles.linkName} onClick={handleSignout}>
                           Sign out
                         </a>

@@ -17,3 +17,9 @@
     margin-bottom: 0px;
   }
 }
+@media (max-width: 450px) {
+  .logoWrapper {
+    width: 4rem;
+    font-size: 1.2rem;
+  }
+}
