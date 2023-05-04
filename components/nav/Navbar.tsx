@@ -17,14 +17,14 @@ import useDebounceEffect from '@/hooks/useDebounceEffect';
 import { globalSearchKeyword } from '@/state';
 
 import { useAtom } from 'jotai';
+import useGlobalSearch from '@/hooks/query/useGlobalSearch';
 
 const NavBar = () => {
-  const [showDropdown, setShowDropdown] = useState(false);
-  const [username, setUsername] = useState('');
-  const [searchClick, setSearchClick] = useState(false);
+  const [sc, setSearchClick] = useState(false);
   const [searchKeyword, setSearchKeyword] = useState('');
+  const [showUserMenu, setShowUserMenu] = useState(false);
+  const [username, setUsername] = useState('');
   const [mounted, setMounted] = useState(false);
-  const [_, setGlobalSearchKeyword] = useAtom(globalSearchKeyword);
   const [scrollY, setScrollY] = useState(0);
 
   const router = useRouter();
@@ -57,9 +57,11 @@ const NavBar = () => {
   }, []);
 
   // update globalSearchKeyword atom state
+  const [_, setGlobalSearchKeyword] = useAtom(globalSearchKeyword);
   useDebounceEffect(() => {
     setGlobalSearchKeyword(searchKeyword);
   });
+  const { data: searchResult } = useGlobalSearch();
 
   const handleLoginButtonClick = useCallback(() => {
     router.push('/login');
@@ -82,11 +84,16 @@ const NavBar = () => {
 
   const handleShowDropdown: MouseEventHandler<HTMLButtonElement> = useCallback((e) => {
     e.preventDefault();
-    setShowDropdown((prev) => !prev);
+    setShowUserMenu((prev) => !prev);
   }, []);
 
   const handleSearchInputChange: ChangeEventHandler<HTMLInputElement> = useCallback((e) => {
     setSearchKeyword(e.target.value);
+  }, []);
+
+  const handleSearchOverlayClick: MouseEventHandler<HTMLDivElement> = useCallback((e) => {
+    setSearchClick(false);
+    setSearchKeyword('');
   }, []);
 
   const isLoggedIn = checkTokenExist();
@@ -109,8 +116,8 @@ const NavBar = () => {
 
             <nav className={styles.navContainer}>
               <motion.div
-                animate={{ width: searchClick ? '15rem' : '1.2rem' }}
-                className={searchClick ? styles.searchBoxActive : styles.searchBox}
+                animate={{ width: sc ? '15rem' : '1.2rem' }}
+                className={sc ? styles.searchBoxActive : styles.searchBox}
               >
                 <FontAwesomeIcon
                   icon={faMagnifyingGlass}
@@ -126,13 +133,13 @@ const NavBar = () => {
                   value={searchKeyword}
                   onChange={handleSearchInputChange}
                   style={{
-                    display: searchClick ? 'block' : 'none',
+                    display: sc ? 'block' : 'none',
                   }}
                 />
               </motion.div>
               <motion.div
-                animate={{ width: searchClick ? '90vw' : '1.2rem' }}
-                className={searchClick ? styles.mobileSearchBoxActive : styles.mobileSearchBox}
+                animate={{ width: sc ? '90vw' : '1.2rem' }}
+                className={sc ? styles.mobileSearchBoxActive : styles.mobileSearchBox}
               >
                 <FontAwesomeIcon
                   icon={faMagnifyingGlass}
@@ -148,32 +155,14 @@ const NavBar = () => {
                   value={searchKeyword}
                   onChange={handleSearchInputChange}
                   style={{
-                    display: searchClick ? 'block' : 'none',
+                    display: sc ? 'block' : 'none',
                   }}
                 />
               </motion.div>
               {mounted && isLoggedIn && (
-                <div>
-                  <button className={styles.usernameBtn} onClick={handleShowDropdown}>
-                    <FontAwesomeIcon icon={faUser} style={{ color: '#ffffff' }} />
-                  </button>
-
-                  {showDropdown && (
-                    <div className={styles.navDropdown}>
-                      <div>
-                        <p className={styles.username}>{username}</p>
-                        <Link href={'/browse/my-list'}>
-                          <a>My List</a>
-                        </Link>
-
-                        <a className={styles.linkName} onClick={handleSignout}>
-                          Sign out
-                        </a>
-                        <div className={styles.lineWrapper}></div>
-                      </div>
-                    </div>
-                  )}
-                </div>
+                <button className={styles.usernameBtn} onClick={handleShowDropdown}>
+                  <FontAwesomeIcon icon={faUser} style={{ color: '#ffffff' }} />
+                </button>
               )}
               {mounted && !isLoggedIn && (
                 <button className={styles.navItem} onClick={handleLoginButtonClick}>
@@ -187,14 +176,32 @@ const NavBar = () => {
       <div
         className={styles.overlay}
         style={{
-          display: searchClick && searchKeyword === '' ? 'block' : 'none',
+          display:
+            (sc && searchKeyword === '') || (sc && (!searchResult || searchResult.length === 0))
+              ? 'block'
+              : 'none',
         }}
-        onClick={() => {
-          if (searchKeyword === '') {
-            setSearchClick(false);
-          }
-        }}
+        onClick={handleSearchOverlayClick}
       ></div>
+      <div
+        className={styles.userMenuOverlay}
+        style={{ display: showUserMenu ? 'block' : 'none' }}
+        onClick={() => {
+          setShowUserMenu(false);
+        }}
+      >
+        <div className={styles.userMenuBox}>
+          <div className={styles.userMenu} style={{ cursor: 'default' }}>
+            {username}
+          </div>
+          <Link href={'/browse/my-list'}>
+            <a className={styles.userMenu}>내가 찜한 컨텐츠</a>
+          </Link>
+          <a className={styles.userMenu} onClick={handleSignout}>
+            로그아웃
+          </a>
+        </div>
+      </div>
     </>
   );
 };

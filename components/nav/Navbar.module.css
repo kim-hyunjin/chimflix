@@ -75,6 +75,38 @@
   font-size: 1rem;
 }
 
+.userMenuOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  min-height: 100vh;
+  z-index: 49;
+}
+
+.userMenuBox {
+  position: absolute;
+  right: 1rem;
+  top: 4rem;
+  background-color: var(--black);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  border-radius: 8px;
+  gap: 0.5rem;
+}
+
+.userMenu {
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+.userMenu:hover {
+  text-decoration: underline;
+}
+
 .navDropdown {
   position: absolute;
   margin-left: auto;
