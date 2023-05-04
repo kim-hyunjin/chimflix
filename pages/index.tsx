@@ -75,64 +75,29 @@ const Home: NextPage<IndexPageServerData> = ({
   initialPlaylist,
   initialOtherContents,
 }) => {
-  const {
-    data: recentVideos,
-    isFetching: isRecentVideosFetching,
-    hasNextPage: isRecentVideosHasNextPage,
-    fetchNextPage: fetchNextRecentVideos,
-  } = useFetchVideo({
+  const recentVideos = useFetchVideo({
     queryKey: 'recentVideos',
     initialData: initialRecentVideos,
   });
 
-  const {
-    data: popularVideos,
-    isFetching: isPopularVideoFetching,
-    hasNextPage: isPopularVideoHasNextPage,
-    fetchNextPage: fetchNextPopularVideos,
-  } = useFetchVideo({
+  const popularVideos = useFetchVideo({
     queryKey: 'popularVideos',
     initialData: initialPopularVideos,
   });
 
-  const {
-    data: playlists,
-    isFetching: isPlaylistFetching,
-    hasNextPage: isPlaylistHasNextPage,
-    fetchNextPage: fetchNextPlaylist,
-  } = useFetchPlaylist({
+  const playlists = useFetchPlaylist({
     queryKey: 'playlists',
     initialData: initialPlaylist,
   });
 
-  const {
-    data: watched,
-    isFetching: isWatchedFetching,
-    hasNextPage: isWatchedHasNextPage,
-    fetchNextPage: fetchNextWatched,
-  } = useFetchWatched();
+  const watched = useFetchWatched();
 
-  const {
-    data: saved,
-    isFetching: isSavedFetching,
-    hasNextPage: isSavedHasNextPage,
-    fetchNextPage: fetchNextSaved,
-  } = useFetchSaved();
+  const saved = useFetchSaved();
 
-  const {
-    data: watching,
-    isFetching: isWatchingNowFetching,
-    hasNextPage: isWatchingNowHasNextPage,
-    fetchNextPage: fetchNextWatchingNow,
-  } = useFetchWatchingNow();
+  const watching = useFetchWatchingNow();
 
   const [gsk] = useAtom(globalSearchKeyword);
-  const {
-    data: globalSearchResult,
-    isFetching: isGlobalSearchFetching,
-    hasNextPage: isGlobalSearchHasNextPage,
-    fetchNextPage: fetchNextGlobalSearch,
-  } = useGlobalSearch();
+  const globalSearch = useGlobalSearch();
 
   const bannerVideo = initialRecentVideos.datas[0];
   if (gsk === '') {
@@ -144,68 +109,69 @@ const Home: NextPage<IndexPageServerData> = ({
         <div className={styles.sectionWrapper}>
           <SectionCards
             title='시청중인 컨텐츠'
-            datas={watching}
+            datas={watching.data}
             size={'large'}
             type={'video'}
             nextDataFetchOption={{
-              isFetching: isWatchingNowFetching,
-              hasNext: Boolean(isWatchingNowHasNextPage),
-              fetchNextData: fetchNextWatchingNow,
+              isFetching: watching.isFetching,
+              hasNext: Boolean(watching.hasNextPage),
+              fetchNextData: watching.fetchNextPage,
             }}
           />
           <SectionCards
             title='최신 컨텐츠'
-            datas={recentVideos || []}
+            datas={recentVideos.data || []}
             size={'large'}
             type={'video'}
             nextDataFetchOption={{
-              isFetching: isRecentVideosFetching,
-              hasNext: (recentVideos || []).length <= 100 && Boolean(isRecentVideosHasNextPage),
-              fetchNextData: fetchNextRecentVideos,
+              isFetching: recentVideos.isFetching,
+              hasNext: (recentVideos.data || []).length <= 100 && Boolean(recentVideos.hasNextPage),
+              fetchNextData: recentVideos.fetchNextPage,
             }}
           />
           <SectionCards
             title='인기 컨텐츠'
-            datas={popularVideos || []}
+            datas={popularVideos.data || []}
             size={'medium'}
             type={'video'}
             nextDataFetchOption={{
-              isFetching: isPopularVideoFetching,
-              hasNext: (popularVideos || []).length <= 100 && Boolean(isPopularVideoHasNextPage),
-              fetchNextData: fetchNextPopularVideos,
+              isFetching: popularVideos.isFetching,
+              hasNext:
+                (popularVideos.data || []).length <= 100 && Boolean(popularVideos.hasNextPage),
+              fetchNextData: popularVideos.fetchNextPage,
             }}
           />
           <SectionCards
             title='내가 찜한 컨텐츠'
-            datas={saved}
+            datas={saved.data}
             size={'medium'}
             type={'video'}
             nextDataFetchOption={{
-              isFetching: isSavedFetching,
-              hasNext: Boolean(isSavedHasNextPage),
-              fetchNextData: fetchNextSaved,
+              isFetching: saved.isFetching,
+              hasNext: Boolean(saved.hasNextPage),
+              fetchNextData: saved.fetchNextPage,
             }}
           />
           <SectionCards
             title='플레이리스트'
-            datas={playlists}
+            datas={playlists.data}
             size={'medium'}
             type={'playlist'}
             nextDataFetchOption={{
-              isFetching: isPlaylistFetching,
-              hasNext: Boolean(isPlaylistHasNextPage),
-              fetchNextData: fetchNextPlaylist,
+              isFetching: playlists.isFetching,
+              hasNext: Boolean(playlists.hasNextPage),
+              fetchNextData: playlists.fetchNextPage,
             }}
           />
           <SectionCards
             title='다시보기'
-            datas={watched}
+            datas={watched.data}
             size={'medium'}
             type={'video'}
             nextDataFetchOption={{
-              isFetching: isWatchedFetching,
-              hasNext: Boolean(isWatchedHasNextPage),
-              fetchNextData: fetchNextWatched,
+              isFetching: watched.isFetching,
+              hasNext: Boolean(watched.hasNextPage),
+              fetchNextData: watched.fetchNextPage,
             }}
           />
           {initialOtherContents?.map((c) => (
@@ -221,20 +187,20 @@ const Home: NextPage<IndexPageServerData> = ({
       </Layout>
     );
   }
-  if (globalSearchResult && globalSearchResult.length > 0) {
+  if (globalSearch.data && globalSearch.data.length > 0) {
     return (
       <Layout>
         <div className={styles.sectionWrapperWithoutBanner}>
           <SectionCards
             title=''
-            datas={globalSearchResult}
+            datas={globalSearch.data}
             size='small'
             type='video'
             shouldWrap={true}
             nextDataFetchOption={{
-              isFetching: isGlobalSearchFetching,
-              hasNext: Boolean(isGlobalSearchHasNextPage),
-              fetchNextData: fetchNextGlobalSearch,
+              isFetching: globalSearch.isFetching,
+              hasNext: Boolean(globalSearch.hasNextPage),
+              fetchNextData: globalSearch.fetchNextPage,
             }}
           />
         </div>

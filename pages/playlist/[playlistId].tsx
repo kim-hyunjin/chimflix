@@ -1,7 +1,6 @@
 import { useRouter } from 'next/router';
 import { useCallback } from 'react';
 import Modal from 'react-modal';
-import clsx from 'classnames';
 
 import styles from '@/styles/Video.module.css';
 import {
@@ -10,7 +9,7 @@ import {
   getPlaylists,
   YoutubeSnippetsWithPage,
 } from '@/lib/videos';
-import { PlaylistInfo, YoutubeSnippet } from '@/types/youtube';
+import { PlaylistInfo } from '@/types/youtube';
 import { GetStaticProps } from 'next';
 import NavBar from '@/components/nav/Navbar';
 import VideoList from '@/components/videos/VideoList';

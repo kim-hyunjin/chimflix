@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { useCallback, useEffect, useRef } from 'react';
+import { ReactNode, useCallback, useEffect, useRef } from 'react';
 import Modal from 'react-modal';
 import clsx from 'classnames';
 
@@ -16,13 +16,23 @@ import { createNewStats, getStatsData } from 'pages/api/stats';
 import { Stats } from '@/types/hasura';
 import Saved from '@/components/icons/Saved';
 
-import Youtube from 'react-youtube';
+import Youtube, { YouTubeEvent } from 'react-youtube';
 
 Modal.setAppElement('#__next');
 
 export const getServerSideProps: GetServerSideProps = async ({ params, req }) => {
   const videoId = String(params?.videoId);
-  const token = String(req.cookies.token);
+  const token = req.cookies.token;
+
+  if (!token) {
+    const video = await getVideoDetail(videoId);
+    return {
+      props: {
+        video,
+        stats: null,
+      },
+    };
+  }
 
   const [video, stats] = await Promise.all([getVideoDetail(videoId), getStatsData(token, videoId)]);
 
@@ -44,30 +54,22 @@ export const getServerSideProps: GetServerSideProps = async ({ params, req }) =>
   };
 };
 
-const Video = ({ video, stats }: { video: VideoInfo; stats: Stats }) => {
+const Video = ({ video, stats }: { video: VideoInfo; stats: Stats | null }) => {
   const router = useRouter();
   const { videoId } = router.query;
 
-  const {
-    favourited,
-    watched,
-    saved,
-    handleToggleLike,
-    handleToggleDislike,
-    handleToggleSave,
-    updateWatched,
-    updatePlayedTime,
-  } = useVideoStatUpdateHandler(stats);
+  const updateHandler = useVideoStatUpdateHandler(stats);
 
   const youtubeRef = useRef<any>();
 
   useEffect(() => {
     return () => {
-      if (youtubeRef.current) {
+      if (youtubeRef.current && updateHandler) {
         const currentTime = youtubeRef.current.getCurrentTime();
-        updatePlayedTime(currentTime);
+        updateHandler.updatePlayedTime(currentTime);
+
         if (youtubeRef.current.playerInfo.duration - currentTime < 30) {
-          updateWatched();
+          updateHandler.updateWatched();
         }
       }
     };
@@ -77,6 +79,18 @@ const Video = ({ video, stats }: { video: VideoInfo; stats: Stats }) => {
   const handleClose = useCallback(() => {
     router.back();
   }, [router]);
+
+  const handlePause = (e: YouTubeEvent<number>) => {
+    if (!updateHandler) return;
+    const { updatePlayedTime, updateWatched } = updateHandler;
+
+    const currentTime = e.target.getCurrentTime();
+    updatePlayedTime(currentTime);
+
+    if (e.target.playerInfo.duration - currentTime < 30) {
+      updateWatched();
+    }
+  };
 
   const { title, publishedAt, description, viewCount } = video;
 
@@ -98,18 +112,11 @@ const Video = ({ video, stats }: { video: VideoInfo; stats: Stats }) => {
             height: '360',
             playerVars: {
               autoplay: 1,
-              start: stats.playedTime,
+              start: stats?.playedTime ?? 0,
             },
           }}
           onReady={(e) => (youtubeRef.current = e.target)}
-          onPause={(e) => {
-            const currentTime = e.target.getCurrentTime();
-            updatePlayedTime(currentTime);
-
-            if (e.target.playerInfo.duration - currentTime < 30) {
-              updateWatched();
-            }
-          }}
+          onPause={handlePause}
         />
 
         <div className={styles.modalBody}>
@@ -117,21 +124,23 @@ const Video = ({ video, stats }: { video: VideoInfo; stats: Stats }) => {
             <div className={styles.col1}>
               <div className={styles.topContent}>
                 <p className={styles.publishTime}>{publishedAt}</p>
-                <div className={styles.likeDislikeBtnWrapper}>
-                  <div className={styles.likeBtnWrapper}>
-                    <button onClick={handleToggleLike}>
+                {updateHandler && (
+                  <div className={styles.likeDislikeBtnWrapper}>
+                    <div className={styles.likeBtnWrapper}>
+                      <button onClick={updateHandler.handleToggleLike}>
+                        <div className={styles.btnWrapper}>
+                          <Like selected={updateHandler.favourited === LIKE.LIKE} />
+                        </div>
+                      </button>
+                    </div>
+                    <button onClick={updateHandler.handleToggleDislike}>
                       <div className={styles.btnWrapper}>
-                        <Like selected={favourited === LIKE.LIKE} />
+                        <DisLike selected={updateHandler.favourited === LIKE.DISLIKE} />
                       </div>
                     </button>
+                    <Saved saved={updateHandler.saved} onClick={updateHandler.handleToggleSave} />
                   </div>
-                  <button onClick={handleToggleDislike}>
-                    <div className={styles.btnWrapper}>
-                      <DisLike selected={favourited === LIKE.DISLIKE} />
-                    </div>
-                  </button>
-                  <Saved saved={saved} onClick={handleToggleSave} />
-                </div>
+                )}
               </div>
               <p className={styles.title}>{title}</p>
               <p className={styles.description}>{description}</p>

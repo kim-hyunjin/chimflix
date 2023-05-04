@@ -1,8 +1,10 @@
+import { checkTokenExist } from '@/lib/cookies';
 import { YoutubeSnippet } from '@/types/youtube';
 
 import { useInfiniteQuery } from '@tanstack/react-query';
 
 const useFetchWatched = () => {
+  const isLoggedIn = checkTokenExist();
   const queryResult = useInfiniteQuery<{
     watched: YoutubeSnippet[];
     total: number;
@@ -28,6 +30,7 @@ const useFetchWatched = () => {
       },
 
       refetchOnWindowFocus: false,
+      enabled: isLoggedIn,
     }
   );
 
