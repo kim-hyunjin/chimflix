@@ -23,3 +23,11 @@ export const removeTokenCookie = () => {
     document.cookie = val;
   }
 };
+
+export const checkTokenExist = () => {
+  if (typeof document === 'undefined') return false;
+
+  const token = cookie.parse(document.cookie).token;
+
+  return !!token;
+};

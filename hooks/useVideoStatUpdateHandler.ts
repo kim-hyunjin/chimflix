@@ -23,11 +23,15 @@ const updateStats = async (newStats: {
   return await res.json();
 };
 
-const useVideoStatUpdateHandler = (stats: Stats) => {
-  const [favourited, setFavourited] = useState<LIKE | null>(stats.favourited);
-  const [watched, setWatched] = useState(stats.watched);
-  const [saved, setSaved] = useState(stats.saved);
-  const [playedTime, setPlayedTime] = useState(stats.playedTime);
+const useVideoStatUpdateHandler = (stats: Stats | null) => {
+  const [favourited, setFavourited] = useState<LIKE | null>(stats?.favourited ?? null);
+  const [watched, setWatched] = useState(stats?.watched ?? false);
+  const [saved, setSaved] = useState(stats?.saved ?? false);
+  const [playedTime, setPlayedTime] = useState(stats?.playedTime ?? 0);
+
+  if (!stats) {
+    return null;
+  }
 
   const handleToggleDislike = async () => {
     const newFav = favourited === LIKE.DISLIKE ? null : LIKE.DISLIKE;

@@ -8,7 +8,7 @@ import { MouseEventHandler, useCallback, useState, useEffect, ChangeEventHandler
 
 import { magic } from '@/lib/magic-client';
 import { useRouter } from 'next/router';
-import { removeTokenCookie } from '@/lib/cookies';
+import { checkTokenExist, removeTokenCookie } from '@/lib/cookies';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 
@@ -23,24 +23,47 @@ const NavBar = () => {
   const [username, setUsername] = useState('');
   const [searchClick, setSearchClick] = useState(false);
   const [searchKeyword, setSearchKeyword] = useState('');
+  const [mounted, setMounted] = useState(false);
   const [_, setGlobalSearchKeyword] = useAtom(globalSearchKeyword);
+  const [scrollY, setScrollY] = useState(0);
+
+  const router = useRouter();
+
+  useEffect(() => {
+    setMounted(true);
+
+    // fetch user name
+    const getUserName = async () => {
+      if (!magic) return null;
+      try {
+        const { email } = await magic.user.getMetadata();
+        if (email) {
+          setUsername(email);
+        }
+      } catch (err) {}
+    };
+    getUserName();
+
+    // add scroll event
+    const scrollEventHandler = () => {
+      setScrollY(window.scrollY);
+    };
+    window.addEventListener('scroll', scrollEventHandler);
+    return () => {
+      window.removeEventListener('scroll', scrollEventHandler);
+    };
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // update globalSearchKeyword atom state
   useDebounceEffect(() => {
     setGlobalSearchKeyword(searchKeyword);
   });
 
-  const router = useRouter();
-
-  const getUserName = useCallback(async () => {
-    if (!magic) return null;
-    try {
-      const { email } = await magic.user.getMetadata();
-      if (email) {
-        setUsername(email);
-      }
-    } catch (err) {}
-  }, []);
+  const handleLoginButtonClick = useCallback(() => {
+    router.push('/login');
+  }, [router]);
 
   const handleSignout = useCallback(
     async (e: any) => {
@@ -57,10 +80,6 @@ const NavBar = () => {
     [router]
   );
 
-  useEffect(() => {
-    getUserName();
-  }, [getUserName]);
-
   const handleShowDropdown: MouseEventHandler<HTMLButtonElement> = useCallback((e) => {
     e.preventDefault();
     setShowDropdown((prev) => !prev);
@@ -70,17 +89,7 @@ const NavBar = () => {
     setSearchKeyword(e.target.value);
   }, []);
 
-  const [scrollY, setScrollY] = useState(0);
-  const scrollEventHandler = () => {
-    setScrollY(window.scrollY);
-  };
-  useEffect(() => {
-    window.addEventListener('scroll', scrollEventHandler);
-
-    return () => {
-      window.removeEventListener('scroll', scrollEventHandler);
-    };
-  }, []);
+  const isLoggedIn = checkTokenExist();
 
   return (
     <>
@@ -94,11 +103,13 @@ const NavBar = () => {
                   <a>Home</a>
                 </Link>
               </li>
-              <li className={styles.navItem}>
-                <Link href={'/browse/my-list'}>
-                  <a>My List</a>
-                </Link>
-              </li>
+              {mounted && isLoggedIn && (
+                <li className={styles.navItem}>
+                  <Link href={'/browse/my-list'}>
+                    <a>My List</a>
+                  </Link>
+                </li>
+              )}
             </ul>
 
             <nav className={styles.navContainer}>
@@ -124,28 +135,35 @@ const NavBar = () => {
                   }}
                 />
               </motion.div>
-              <div>
-                <button className={styles.usernameBtn} onClick={handleShowDropdown}>
-                  <p className={styles.username}>{username}</p>
-                  <Image
-                    src='/static/expand_more.svg'
-                    alt='Expand more'
-                    width='24px'
-                    height='24px'
-                  />
-                </button>
+              {mounted && isLoggedIn && (
+                <div>
+                  <button className={styles.usernameBtn} onClick={handleShowDropdown}>
+                    <p className={styles.username}>{username}</p>
+                    <Image
+                      src='/static/expand_more.svg'
+                      alt='Expand more'
+                      width='24px'
+                      height='24px'
+                    />
+                  </button>
 
-                {showDropdown && (
-                  <div className={styles.navDropdown}>
-                    <div>
-                      <a className={styles.linkName} onClick={handleSignout}>
-                        Sign out
-                      </a>
-                      <div className={styles.lineWrapper}></div>
+                  {showDropdown && (
+                    <div className={styles.navDropdown}>
+                      <div>
+                        <a className={styles.linkName} onClick={handleSignout}>
+                          Sign out
+                        </a>
+                        <div className={styles.lineWrapper}></div>
+                      </div>
                     </div>
-                  </div>
-                )}
-              </div>
+                  )}
+                </div>
+              )}
+              {mounted && !isLoggedIn && (
+                <button className={styles.navItem} onClick={handleLoginButtonClick}>
+                  Login
+                </button>
+              )}
             </nav>
           </div>
         </div>
