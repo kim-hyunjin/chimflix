@@ -9,10 +9,11 @@ const VideoList = ({ videos }: { videos: YoutubeSnippet[] }) => {
     <ul className={styles.listWrapper}>
       {videos.map((v, i) => (
         <li key={v.id} className={styles.listItem}>
-          <div className={styles.listItemNumber}>{i + 1}</div>
-          <Link href={`/video/${v.id}`}>
-            <a>
-              {/* <iframe
+          <div className={styles.listItemLeft}>
+            <div className={styles.listItemNumber}>{i + 1}</div>
+            <Link href={`/video/${v.id}`}>
+              <a>
+                {/* <iframe
             id='ytplayer'
             width='200'
             height='100'
@@ -20,9 +21,10 @@ const VideoList = ({ videos }: { videos: YoutubeSnippet[] }) => {
             frameBorder='0'
             allowFullScreen
           ></iframe> */}
-              <Card imgUrl={v.imgUrl} size='small' elemIndex={i} />
-            </a>
-          </Link>
+                <Card imgUrl={v.imgUrl} size='small' elemIndex={i} />
+              </a>
+            </Link>
+          </div>
 
           <div className={styles.listItemTitle}>
             <p>{v.title}</p>

@@ -27,7 +27,7 @@ const useSearchVideo = ({
       return await res.json();
     },
     {
-      getNextPageParam: (lastPage) => lastPage.contents.nextPageToken,
+      getNextPageParam: (lastPage) => lastPage?.contents?.nextPageToken,
       initialData: initialData
         ? {
             pages: [{ title, contents: initialData }],
@@ -42,7 +42,7 @@ const useSearchVideo = ({
   const seenItems: Record<string, boolean> = {};
 
   const data = queryResult.data?.pages
-    .flatMap((p) => (p ? p.contents.datas : []))
+    .flatMap((p) => (p ? p.contents?.datas : []))
     .filter((el) => {
       if (!el?.id) return false;
       if (seenItems[el.id]) {

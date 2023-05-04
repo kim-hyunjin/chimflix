@@ -123,33 +123,33 @@ const Video = ({ video, stats }: { video: VideoInfo; stats: Stats | null }) => {
           <div className={styles.modalBodyContent}>
             <div className={styles.col1}>
               <div className={styles.topContent}>
-                <p className={styles.publishTime}>{publishedAt}</p>
-                {updateHandler && (
-                  <div className={styles.likeDislikeBtnWrapper}>
-                    <div className={styles.likeBtnWrapper}>
-                      <button onClick={updateHandler.handleToggleLike}>
+                <div className={styles.topContentLeft}>
+                  <p className={styles.publishTime}>{publishedAt}</p>
+                  {updateHandler && (
+                    <div className={styles.likeDislikeBtnWrapper}>
+                      <div className={styles.likeBtnWrapper}>
+                        <button onClick={updateHandler.handleToggleLike}>
+                          <div className={styles.btnWrapper}>
+                            <Like selected={updateHandler.favourited === LIKE.LIKE} />
+                          </div>
+                        </button>
+                      </div>
+                      <button onClick={updateHandler.handleToggleDislike}>
                         <div className={styles.btnWrapper}>
-                          <Like selected={updateHandler.favourited === LIKE.LIKE} />
+                          <DisLike selected={updateHandler.favourited === LIKE.DISLIKE} />
                         </div>
                       </button>
+                      <Saved saved={updateHandler.saved} onClick={updateHandler.handleToggleSave} />
                     </div>
-                    <button onClick={updateHandler.handleToggleDislike}>
-                      <div className={styles.btnWrapper}>
-                        <DisLike selected={updateHandler.favourited === LIKE.DISLIKE} />
-                      </div>
-                    </button>
-                    <Saved saved={updateHandler.saved} onClick={updateHandler.handleToggleSave} />
-                  </div>
-                )}
+                  )}
+                </div>
+                <p className={styles.subText}>
+                  <span className={styles.labelText}>View Count: </span>
+                  <span className={styles.valueText}>{viewCount}</span>
+                </p>
               </div>
               <p className={styles.title}>{title}</p>
               <p className={styles.description}>{description}</p>
-            </div>
-            <div className={styles.col2}>
-              <p className={clsx(styles.subText, styles.subTextWrapper)}>
-                <span className={styles.labelText}>View Count: </span>
-                <span className={styles.valueText}>{viewCount}</span>
-              </p>
             </div>
           </div>
         </div>

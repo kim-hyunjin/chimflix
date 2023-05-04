@@ -48,7 +48,7 @@ const MyList = ({ myListVideos, total }: { myListVideos: YoutubeSnippet[]; total
     return (
       <Layout>
         <SectionCards
-          title='My List'
+          title='내가 찜한 컨텐츠'
           datas={data}
           size='small'
           type='video'
