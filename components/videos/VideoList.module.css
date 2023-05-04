@@ -23,6 +23,12 @@
   border-radius: 5px;
 }
 
+.listItemLeft {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
 .listItemNumber {
   font-size: 1.2rem;
   color: var(--white30);
@@ -32,4 +38,13 @@
   margin-top: 1rem;
   font-size: 0.7rem;
   color: var(--gray10);
+}
+
+@media (max-width: 450px) {
+  .listItem {
+    flex-direction: column;
+  }
+  .listItemNumber {
+    display: none;
+  }
 }

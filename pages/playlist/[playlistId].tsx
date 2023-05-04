@@ -106,7 +106,7 @@ const Video = ({
           frameBorder='0'
           allowFullScreen
         ></iframe>
-        <div className={styles.modalBody}>
+        <div className={styles.modalBody} style={{ marginTop: '1rem' }}>
           <div className={styles.modalBodyContent}>
             <div className={styles.col1}>
               <p className={styles.publishTime}>{publishedAt}</p>
