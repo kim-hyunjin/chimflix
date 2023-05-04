@@ -14,12 +14,12 @@ const Saved = ({ saved, onClick }: { saved: boolean; onClick: () => void }) => {
     }
   };
   return (
-    <button onClick={handleClick}>
+    <button onClick={handleClick} style={{ width: '1.8rem' }}>
       {saved ? (
-        <FontAwesomeIcon icon={faCheck} style={{ color: '#ffffff' }} size='2x' />
+        <FontAwesomeIcon icon={faCheck} style={{ color: '#ffffff' }} />
       ) : (
         <motion.div animate={startTrans ? { rotate: 90 } : false}>
-          <FontAwesomeIcon icon={faPlus} style={{ color: '#ffffff' }} size='2x' />
+          <FontAwesomeIcon icon={faPlus} style={{ color: '#ffffff' }} />
         </motion.div>
       )}
     </button>
