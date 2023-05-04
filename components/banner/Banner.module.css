@@ -58,6 +58,9 @@
   display: flex;
   flex-direction: row;
   width: 100%;
+
+  position: absolute;
+  bottom: 3rem;
 }
 
 .playText {
@@ -98,6 +101,9 @@
   background-color: var(--white10);
   width: 8rem /* 128px */;
 }
+.btnWithIcon:hover {
+  background: rgba(255, 255, 255, 0.7);
+}
 
 @media (min-width: 768px) {
   .left {
@@ -117,5 +123,11 @@
   .playText {
     font-size: 1.25rem /* 20px */;
     line-height: 1.75rem /* 28px */;
+  }
+}
+
+@media (max-width: 450px) {
+  .playBtnWrapper {
+    left: 1rem;
   }
 }
