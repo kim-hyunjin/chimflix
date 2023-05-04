@@ -130,6 +130,28 @@ const NavBar = () => {
                   }}
                 />
               </motion.div>
+              <motion.div
+                animate={{ width: searchClick ? '90vw' : '1.2rem' }}
+                className={searchClick ? styles.mobileSearchBoxActive : styles.mobileSearchBox}
+              >
+                <FontAwesomeIcon
+                  icon={faMagnifyingGlass}
+                  style={{
+                    cursor: 'pointer',
+                    width: '1rem',
+                  }}
+                  onClick={() => setSearchClick(true)}
+                />
+                <input
+                  className={styles.searchInput}
+                  placeholder={'제목'}
+                  value={searchKeyword}
+                  onChange={handleSearchInputChange}
+                  style={{
+                    display: searchClick ? 'block' : 'none',
+                  }}
+                />
+              </motion.div>
               {mounted && isLoggedIn && (
                 <div>
                   <button className={styles.usernameBtn} onClick={handleShowDropdown}>
@@ -165,7 +187,7 @@ const NavBar = () => {
       <div
         className={styles.overlay}
         style={{
-          display: searchClick ? 'block' : 'none',
+          display: searchClick && searchKeyword === '' ? 'block' : 'none',
         }}
         onClick={() => {
           if (searchKeyword === '') {

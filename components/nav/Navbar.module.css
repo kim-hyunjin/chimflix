@@ -103,6 +103,20 @@
   color: var(--white);
   background-color: var(--black);
 }
+.mobileSearchBox {
+  color: var(--white);
+  display: none  !important;
+}
+.mobileSearchBoxActive {
+  padding: 0.5rem;
+  border-radius: 8px;
+  gap: 0.5rem;
+  color: var(--white);
+  background-color: var(--black);
+  position: absolute;
+  display: none !important;
+}
+
 
 .searchInput {
   background-color: transparent;
@@ -160,5 +174,16 @@
 
   .navItem {
     margin-right: 1.25rem /* 20px */;
+  }
+}
+
+@media (max-width: 450px) {
+  .searchBox,
+  .searchBoxActive {
+    display: none !important;
+  }
+  .mobileSearchBox,
+  .mobileSearchBoxActive {
+    display: flex !important;
   }
 }
