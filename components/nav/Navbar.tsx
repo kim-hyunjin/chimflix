@@ -115,14 +115,13 @@ const NavBar = () => {
 
             <nav className={styles.navContainer}>
               <motion.div
-                animate={{ width: sc ? '15rem' : '1.2rem' }}
+                animate={{ width: sc ? '25vw' : '1.2rem' }}
                 className={sc ? styles.searchBoxActive : styles.searchBox}
               >
                 <FontAwesomeIcon
                   icon={faMagnifyingGlass}
                   style={{
                     cursor: 'pointer',
-                    width: '1rem',
                   }}
                   onClick={() => setSearchClick(true)}
                 />
@@ -144,7 +143,6 @@ const NavBar = () => {
                   icon={faMagnifyingGlass}
                   style={{
                     cursor: 'pointer',
-                    width: '1rem',
                   }}
                   onClick={() => setSearchClick(true)}
                 />

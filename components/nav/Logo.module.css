@@ -1,7 +1,6 @@
 .logoLink {
   display: flex;
   font-weight: 500;
-  font-size: 1rem;
   align-items: center;
   color: var(--white10);
 }
@@ -9,7 +8,7 @@
 .logoWrapper {
   color: var(--red);
   width: 8rem /* 128px */;
-  font-size: 32px;
+  font-size: 2rem;
 }
 
 @media (min-width: 768px) {
