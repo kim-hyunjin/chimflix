@@ -1,15 +1,9 @@
-import type { GetStaticProps, NextPage } from 'next';
-import Head from 'next/head';
+'use client';
+
 import Banner from '../components/banner/Banner';
 import SectionCards from '../components/card/SectionCards';
 import NavBar from '../components/nav/Navbar';
 import styles from '../styles/Home.module.css';
-import {
-  getPlaylists,
-  getVideos,
-  getVideosWithKeyword,
-  YoutubeSnippetsWithPage,
-} from '../lib/videos';
 
 import useFetchPlaylist from '@/hooks/query/useFetchPlaylist';
 import useFetchWatched from '@/hooks/query/useFetchWatched';
@@ -23,71 +17,19 @@ import { globalSearchKeyword } from '@/state';
 import { useAtom } from 'jotai';
 import { ReactNode } from 'react';
 import NoData from '@/components/error/NoData';
+import { keywords } from './constant';
 
-type IndexPageServerData = {
-  initialRecentVideos: YoutubeSnippetsWithPage;
-  initialPopularVideos: YoutubeSnippetsWithPage;
-  initialPlaylist: YoutubeSnippetsWithPage;
-  initialOtherContents:
-    | { title: string; keyword: string; contents: YoutubeSnippetsWithPage }[]
-    | null;
-};
-export const getStaticProps: GetStaticProps<IndexPageServerData> = async () => {
-  const noData = { datas: [], nextPageToken: null };
-
-  const [initialRecentVideos, initialPopularVideos, initialPlaylist, ...initialOtherContents] =
-    await Promise.allSettled([
-      getVideos({ order: 'date' }),
-      getVideos({ order: 'viewCount' }),
-      getPlaylists(),
-      getVideosWithKeyword({ title: '월드컵 모음', keyword: '월드컵' }),
-      getVideosWithKeyword({
-        title: '도라지 도라지 배도라지',
-        keyword: '배도라지',
-      }),
-      getVideosWithKeyword({ title: '침.철.단', keyword: '침철단' }),
-      getVideosWithKeyword({ title: '다양한 손님들과', keyword: '초대석' }),
-      getVideosWithKeyword({ title: '유익함까지 챙기기', keyword: '특강' }),
-    ]);
-
-  const fulfilledOtherContents = initialOtherContents
-    .filter((c) => c.status === 'fulfilled')
-    .map((f: any) => f.value);
-
-  const props = {
-    initialRecentVideos:
-      initialRecentVideos.status === 'fulfilled' ? initialRecentVideos.value : noData,
-    initialPopularVideos:
-      initialPopularVideos.status === 'fulfilled' ? initialPopularVideos.value : noData,
-    initialPlaylist: initialPlaylist.status === 'fulfilled' ? initialPlaylist.value : noData,
-    initialOtherContents: fulfilledOtherContents.length > 0 ? fulfilledOtherContents : null,
-  };
-
-  return {
-    props,
-    revalidate: 60 * 60, // 1hour
-  };
-};
-
-const Home: NextPage<IndexPageServerData> = ({
-  initialRecentVideos,
-  initialPopularVideos,
-  initialPlaylist,
-  initialOtherContents,
-}) => {
+export default function Home() {
   const recentVideos = useFetchVideo({
     queryKey: 'recentVideos',
-    initialData: initialRecentVideos,
   });
 
   const popularVideos = useFetchVideo({
     queryKey: 'popularVideos',
-    initialData: initialPopularVideos,
   });
 
   const playlists = useFetchPlaylist({
     queryKey: 'playlists',
-    initialData: initialPlaylist,
   });
 
   const watched = useFetchWatched();
@@ -99,7 +41,7 @@ const Home: NextPage<IndexPageServerData> = ({
   const [gsk] = useAtom(globalSearchKeyword);
   const globalSearch = useGlobalSearch();
 
-  const bannerVideo = initialRecentVideos.datas[0];
+  const bannerVideo = recentVideos.data?.[0];
   if (gsk === '') {
     return (
       <Layout>
@@ -174,12 +116,11 @@ const Home: NextPage<IndexPageServerData> = ({
               fetchNextData: watched.fetchNextPage,
             }}
           />
-          {initialOtherContents?.map((c) => (
+          {keywords?.map((c) => (
             <SectionCardsWithKeyword
               key={c.title}
               title={c.title}
               keyword={c.keyword}
-              initialData={c.contents}
               size={'medium'}
             />
           ))}
@@ -215,17 +156,11 @@ const Home: NextPage<IndexPageServerData> = ({
       </div>
     </Layout>
   );
-};
+}
 
 const Layout = ({ children }: { children: ReactNode }) => {
   return (
     <div className={styles.container}>
-      <Head>
-        <title>Chimflix</title>
-        <meta name='description' content='침플릭스 chimflix - 침착맨을 위한 넷플릭스' />
-        <link rel='icon' href='/favicon.ico' />
-      </Head>
-
       <div className={styles.main}>
         <NavBar />
         {children}
@@ -233,5 +168,3 @@ const Layout = ({ children }: { children: ReactNode }) => {
     </div>
   );
 };
-
-export default Home;

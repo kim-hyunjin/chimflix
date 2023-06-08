@@ -12,10 +12,11 @@ const DEFAULT_IMAGE_SRC =
 interface CardProps {
   imgUrl: string;
   elemIndex: number;
+  alt?: string;
   size?: 'large' | 'medium' | 'small';
 }
 
-const Card = ({ imgUrl, elemIndex, size = 'medium' }: CardProps) => {
+const Card = ({ imgUrl, elemIndex, size = 'medium', alt = 'image' }: CardProps) => {
   const [imgSrc, setImgSrc] = useState(imgUrl);
 
   const cardStyleMap = useMemo(
@@ -41,7 +42,7 @@ const Card = ({ imgUrl, elemIndex, size = 'medium' }: CardProps) => {
       >
         <Image
           src={imgSrc}
-          alt='image'
+          alt={alt}
           className={styles.cardImg}
           onError={handleOnError}
           width={cardStyleMap[size].imageWidth}

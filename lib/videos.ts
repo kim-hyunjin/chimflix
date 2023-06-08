@@ -13,6 +13,7 @@ const calmdownman_id = 'UCUj6rrhMTR9pipbAWBAMvUQ';
 interface GetVideoOption {
   order?: 'date' | 'viewCount';
   pageToken?: string;
+  requestInit?: RequestInit;
 }
 
 interface GetVideoWithKeywordParam extends GetVideoOption {
@@ -27,10 +28,11 @@ export interface YoutubeSnippetsWithPage {
 
 const fetchYoutubeDatas = async <T = any>(
   url: string,
-  dataMapper?: (v: any) => T
+  dataMapper?: (v: any) => T,
+  requestInit?: RequestInit
 ): Promise<{ datas: T[]; nextPageToken: string | null }> => {
   try {
-    const response = await fetch(url);
+    const response = await fetch(url, requestInit);
 
     const data = await response.json();
 
@@ -82,7 +84,7 @@ export const getVideos = (option?: GetVideoOption): Promise<YoutubeSnippetsWithP
     option?.pageToken ? `&pageToken=${option.pageToken}` : ''
   }`;
 
-  return fetchYoutubeDatas<YoutubeSnippet>(URL, commonSnippetMapper);
+  return fetchYoutubeDatas<YoutubeSnippet>(URL, commonSnippetMapper, option?.requestInit);
 };
 
 export const getVideosWithKeyword = async ({
@@ -90,6 +92,7 @@ export const getVideosWithKeyword = async ({
   keyword,
   order,
   pageToken,
+  requestInit,
 }: GetVideoWithKeywordParam): Promise<{
   title?: string;
   keyword: string;
@@ -107,7 +110,7 @@ export const getVideosWithKeyword = async ({
     pageToken ? `&pageToken=${pageToken}` : ''
   }`;
 
-  const contents = await fetchYoutubeDatas<YoutubeSnippet>(URL, commonSnippetMapper);
+  const contents = await fetchYoutubeDatas<YoutubeSnippet>(URL, commonSnippetMapper, requestInit);
   return {
     title,
     keyword,
@@ -118,7 +121,10 @@ export const getVideosWithKeyword = async ({
 /**
  * /playlists
  */
-export const getPlaylists = (pageToken?: string): Promise<YoutubeSnippetsWithPage> => {
+export const getPlaylists = (
+  pageToken?: string,
+  requestInit?: RequestInit
+): Promise<YoutubeSnippetsWithPage> => {
   if (process.env.NODE_ENV !== 'production') {
     return new Promise((res) => {
       res(fetchDummyPlaylist());
@@ -129,14 +135,17 @@ export const getPlaylists = (pageToken?: string): Promise<YoutubeSnippetsWithPag
     process.env.YOUTUBE_API_KEY
   }${pageToken ? `&pageToken=${pageToken}` : ''}`;
 
-  return fetchYoutubeDatas<YoutubeSnippet>(URL, commonSnippetMapper);
+  return fetchYoutubeDatas<YoutubeSnippet>(URL, commonSnippetMapper, requestInit);
 };
 
-export const getPlaylistDetail = async (playlistId: string): Promise<PlaylistInfo | null> => {
+export const getPlaylistDetail = async (
+  playlistId: string,
+  requestInit?: RequestInit
+): Promise<PlaylistInfo | null> => {
   const URL = `${YOUTUBE_API_URL}/playlists?part=snippet&id=${playlistId}&key=${process.env.YOUTUBE_API_KEY}`;
 
   try {
-    const data = (await fetchYoutubeDatas(URL)).datas[0];
+    const data = (await fetchYoutubeDatas(URL, undefined, requestInit)).datas[0];
 
     const { title, description, publishedAt } = data.snippet;
 
@@ -155,11 +164,14 @@ export const getPlaylistDetail = async (playlistId: string): Promise<PlaylistInf
  * /videos
  */
 const videoDetailParts = ['snippet', 'contentDetails', 'statistics'].join('%2C');
-export const getVideoDetail = async (id: string): Promise<VideoInfo | null> => {
+export const getVideoDetail = async (
+  id: string,
+  requestInit?: RequestInit
+): Promise<VideoInfo | null> => {
   const URL = `${YOUTUBE_API_URL}/videos?part=${videoDetailParts}&id=${id}&key=${process.env.YOUTUBE_API_KEY}`;
 
   try {
-    const video = (await fetchYoutubeDatas(URL)).datas[0];
+    const video = (await fetchYoutubeDatas(URL, undefined, requestInit)).datas[0];
 
     const { title, description, publishedAt } = video.snippet;
 
@@ -188,7 +200,8 @@ const playlistItemMapper = (v: any): YoutubeSnippet => ({
 
 export const getPlaylistItems = async (
   playlistId: string,
-  pageToken?: string
+  pageToken?: string,
+  requestInit?: RequestInit
 ): Promise<YoutubeSnippetsWithPage> => {
   if (process.env.NODE_ENV !== 'production') {
     return new Promise((res) => {
@@ -200,7 +213,7 @@ export const getPlaylistItems = async (
   }${pageToken ? `&pageToken=${pageToken}` : ''}`;
 
   try {
-    const fetchResult = await fetchYoutubeDatas(URL, playlistItemMapper);
+    const fetchResult = await fetchYoutubeDatas(URL, playlistItemMapper, requestInit);
     // console.log({ fetchResult });
     return fetchResult;
   } catch (e) {

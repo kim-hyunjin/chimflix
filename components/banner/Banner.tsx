@@ -1,7 +1,7 @@
 import styles from './Banner.module.css';
 
 import Image from 'next/image';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 
 const Banner = (props: { videoId: string; title: string; imgUrl: string }) => {
   const { videoId, title, imgUrl } = props;

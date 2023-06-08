@@ -1,3 +1,5 @@
+'use client';
+
 import Link from 'next/link';
 
 import styles from './Navbar.module.css';
@@ -6,7 +8,7 @@ import Logo from './Logo';
 import { MouseEventHandler, useCallback, useState, useEffect, ChangeEventHandler } from 'react';
 
 import { magic } from '@/lib/magic-client';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { checkTokenExist, removeTokenCookie } from '@/lib/cookies';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass, faUser } from '@fortawesome/free-solid-svg-icons';
@@ -97,110 +99,110 @@ const NavBar = () => {
 
   const isLoggedIn = checkTokenExist();
 
-  return <>
-    <div className={scrollY === 0 ? styles.container : styles.container2}>
-      <div className={styles.wrapper}>
-        <Logo />
-        <div className={styles.navWrapper}>
-          <ul className={styles.navItems}>
-            {mounted && isLoggedIn && (
-              <li className={styles.navItem}>
-                <Link href={'/browse/my-list'}>
-                  내가 찜한 컨텐츠
-                </Link>
-              </li>
-            )}
-          </ul>
+  return (
+    <>
+      <div className={scrollY === 0 ? styles.container : styles.container2}>
+        <div className={styles.wrapper}>
+          <Logo />
+          <div className={styles.navWrapper}>
+            <ul className={styles.navItems}>
+              {mounted && isLoggedIn && (
+                <li className={styles.navItem}>
+                  <Link href={'/browse/my-list'}>내가 찜한 컨텐츠</Link>
+                </li>
+              )}
+            </ul>
 
-          <nav className={styles.navContainer}>
-            <motion.div
-              animate={{ width: sc ? '15rem' : '1.2rem' }}
-              className={sc ? styles.searchBoxActive : styles.searchBox}
-            >
-              <FontAwesomeIcon
-                icon={faMagnifyingGlass}
-                style={{
-                  cursor: 'pointer',
-                  width: '1rem',
-                }}
-                onClick={() => setSearchClick(true)}
-              />
-              <input
-                className={styles.searchInput}
-                placeholder={'제목'}
-                value={searchKeyword}
-                onChange={handleSearchInputChange}
-                style={{
-                  display: sc ? 'block' : 'none',
-                }}
-              />
-            </motion.div>
-            <motion.div
-              animate={{ width: sc ? '90vw' : '1.2rem' }}
-              className={sc ? styles.mobileSearchBoxActive : styles.mobileSearchBox}
-            >
-              <FontAwesomeIcon
-                icon={faMagnifyingGlass}
-                style={{
-                  cursor: 'pointer',
-                  width: '1rem',
-                }}
-                onClick={() => setSearchClick(true)}
-              />
-              <input
-                className={styles.searchInput}
-                placeholder={'제목'}
-                value={searchKeyword}
-                onChange={handleSearchInputChange}
-                style={{
-                  display: sc ? 'block' : 'none',
-                }}
-              />
-            </motion.div>
-            {mounted && isLoggedIn && (
-              <button className={styles.usernameBtn} onClick={handleShowDropdown}>
-                <FontAwesomeIcon icon={faUser} style={{ color: '#ffffff' }} />
-              </button>
-            )}
-            {mounted && !isLoggedIn && (
-              <button className={styles.navItem} onClick={handleLoginButtonClick}>
-                Login
-              </button>
-            )}
-          </nav>
+            <nav className={styles.navContainer}>
+              <motion.div
+                animate={{ width: sc ? '15rem' : '1.2rem' }}
+                className={sc ? styles.searchBoxActive : styles.searchBox}
+              >
+                <FontAwesomeIcon
+                  icon={faMagnifyingGlass}
+                  style={{
+                    cursor: 'pointer',
+                    width: '1rem',
+                  }}
+                  onClick={() => setSearchClick(true)}
+                />
+                <input
+                  className={styles.searchInput}
+                  placeholder={'제목'}
+                  value={searchKeyword}
+                  onChange={handleSearchInputChange}
+                  style={{
+                    display: sc ? 'block' : 'none',
+                  }}
+                />
+              </motion.div>
+              <motion.div
+                animate={{ width: sc ? '90vw' : '1.2rem' }}
+                className={sc ? styles.mobileSearchBoxActive : styles.mobileSearchBox}
+              >
+                <FontAwesomeIcon
+                  icon={faMagnifyingGlass}
+                  style={{
+                    cursor: 'pointer',
+                    width: '1rem',
+                  }}
+                  onClick={() => setSearchClick(true)}
+                />
+                <input
+                  className={styles.searchInput}
+                  placeholder={'제목'}
+                  value={searchKeyword}
+                  onChange={handleSearchInputChange}
+                  style={{
+                    display: sc ? 'block' : 'none',
+                  }}
+                />
+              </motion.div>
+              {mounted && isLoggedIn && (
+                <button className={styles.usernameBtn} onClick={handleShowDropdown}>
+                  <FontAwesomeIcon icon={faUser} style={{ color: '#ffffff' }} />
+                </button>
+              )}
+              {mounted && !isLoggedIn && (
+                <button className={styles.navItem} onClick={handleLoginButtonClick}>
+                  Login
+                </button>
+              )}
+            </nav>
+          </div>
         </div>
       </div>
-    </div>
-    <div
-      className={styles.overlay}
-      style={{
-        display:
-          (sc && searchKeyword === '') || (sc && (!searchResult || searchResult.length === 0))
-            ? 'block'
-            : 'none',
-      }}
-      onClick={handleSearchOverlayClick}
-    ></div>
-    <div
-      className={styles.userMenuOverlay}
-      style={{ display: showUserMenu ? 'block' : 'none' }}
-      onClick={() => {
-        setShowUserMenu(false);
-      }}
-    >
-      <div className={styles.userMenuBox}>
-        <div className={styles.userMenu} style={{ cursor: 'default' }}>
-          {username}
+      <div
+        className={styles.overlay}
+        style={{
+          display:
+            (sc && searchKeyword === '') || (sc && (!searchResult || searchResult.length === 0))
+              ? 'block'
+              : 'none',
+        }}
+        onClick={handleSearchOverlayClick}
+      ></div>
+      <div
+        className={styles.userMenuOverlay}
+        style={{ display: showUserMenu ? 'block' : 'none' }}
+        onClick={() => {
+          setShowUserMenu(false);
+        }}
+      >
+        <div className={styles.userMenuBox}>
+          <div className={styles.userMenu} style={{ cursor: 'default' }}>
+            {username}
+          </div>
+          <Link href={'/browse/my-list'} className={styles.userMenu}>
+            내가 찜한 컨텐츠
+          </Link>
+          <a className={styles.userMenu} onClick={handleSignout}>
+            로그아웃
+          </a>
         </div>
-        <Link href={'/browse/my-list'} className={styles.userMenu}>
-          내가 찜한 컨텐츠
-        </Link>
-        <a className={styles.userMenu} onClick={handleSignout}>
-          로그아웃
-        </a>
       </div>
-    </div>
-  </>;
+    </>
+  );
 };
 
 export default NavBar;
