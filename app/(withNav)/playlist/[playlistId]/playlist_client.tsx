@@ -1,63 +1,19 @@
-import { useRouter } from 'next/router';
+'use client';
+
+import { useRouter } from 'next/navigation';
 import { useCallback } from 'react';
 import Modal from 'react-modal';
 
 import styles from '@/styles/Video.module.css';
-import {
-  getPlaylistDetail,
-  getPlaylistItems,
-  getPlaylists,
-  YoutubeSnippetsWithPage,
-} from '@/lib/videos';
+import { YoutubeSnippetsWithPage } from '@/lib/videos';
 import { PlaylistInfo } from '@/types/youtube';
-import { GetStaticProps } from 'next';
-import NavBar from '@/components/nav/Navbar';
 import VideoList from '@/components/videos/VideoList';
 import useFetchPlaylistItem from '@/hooks/query/useFetchPlaylistItem';
 import useInfiniteScroll from '@/hooks/useInfiniteScroll';
 
-Modal.setAppElement('#__next');
+Modal.setAppElement('#root');
 
-export const getStaticProps: GetStaticProps = async ({ params }) => {
-  if (!params?.playlistId) {
-    return {
-      redirect: {
-        destination: '/',
-        permanent: false,
-      },
-    };
-  }
-  const playlistId = String(params?.playlistId);
-  const videos: YoutubeSnippetsWithPage = await getPlaylistItems(playlistId);
-  const playlistInfo: PlaylistInfo | null = await getPlaylistDetail(playlistId);
-
-  if (!playlistInfo) {
-    return {
-      notFound: true,
-    };
-  }
-
-  return {
-    props: {
-      playlistId,
-      videos,
-      playlistInfo,
-    },
-    revalidate: 60 * 60 * 24, // 1 day
-  };
-};
-
-export async function getStaticPaths() {
-  const listOfPlaylists = await getPlaylists();
-
-  const paths = listOfPlaylists.datas.map((p) => ({
-    params: { playlistId: p.id },
-  }));
-
-  return { paths, fallback: true };
-}
-
-const Video = ({
+export default function PlaylistDetail({
   playlistId,
   videos,
   playlistInfo,
@@ -65,7 +21,7 @@ const Video = ({
   playlistId: string | null;
   videos: YoutubeSnippetsWithPage;
   playlistInfo: PlaylistInfo;
-}) => {
+}) {
   const { data, isFetching, hasNextPage, fetchNextPage } = useFetchPlaylistItem({
     queryKey: 'playlistItems',
     playlistId,
@@ -89,7 +45,6 @@ const Video = ({
 
   return (
     <div className={styles.container}>
-      <NavBar />
       <Modal
         isOpen={true}
         contentLabel='Watch the series'
@@ -120,6 +75,4 @@ const Video = ({
       </Modal>
     </div>
   );
-};
-
-export default Video;
+}
