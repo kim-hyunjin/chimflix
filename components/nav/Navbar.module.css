@@ -44,8 +44,6 @@
   flex-direction: row;
   align-items: center;
   margin-left: 1.5rem /* 24px */;
-  font-weight: 600;
-  font-size: 1.2rem;
 
   line-height: 1.25rem /* 20px */;
   list-style: none;
@@ -53,6 +51,8 @@
 
 .navItem {
   cursor: pointer;
+  font-weight: 600;
+  font-size: 1.2rem;
   margin-right: 0.75rem /* 12px */;
 }
 
