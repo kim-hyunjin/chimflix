@@ -1,9 +1,8 @@
 'use client';
 
-import Banner from '../components/banner/Banner';
-import SectionCards from '../components/card/SectionCards';
-import NavBar from '../components/nav/Navbar';
-import styles from '../styles/Home.module.css';
+import Banner from '@/components/banner/Banner';
+import SectionCards from '@/components/card/SectionCards';
+import styles from '@/styles/Home.module.css';
 
 import useFetchPlaylist from '@/hooks/query/useFetchPlaylist';
 import useFetchWatched from '@/hooks/query/useFetchWatched';
@@ -15,9 +14,8 @@ import useGlobalSearch from '@/hooks/query/useGlobalSearch';
 import { globalSearchKeyword } from '@/state';
 
 import { useAtom } from 'jotai';
-import { ReactNode } from 'react';
 import NoData from '@/components/error/NoData';
-import { keywords } from './constant';
+import { keywords } from '../constant';
 
 export default function Home() {
   const recentVideos = useFetchVideo({
@@ -44,7 +42,7 @@ export default function Home() {
   const bannerVideo = recentVideos.data?.[0];
   if (gsk === '') {
     return (
-      <Layout>
+      <>
         {bannerVideo && (
           <Banner videoId={bannerVideo.id} title={bannerVideo.title} imgUrl={bannerVideo.imgUrl} />
         )}
@@ -125,46 +123,31 @@ export default function Home() {
             />
           ))}
         </div>
-      </Layout>
+      </>
     );
   }
   if (globalSearch.data && globalSearch.data.length > 0) {
     return (
-      <Layout>
-        <div className={styles.sectionWrapperWithoutBanner}>
-          <SectionCards
-            title=''
-            datas={globalSearch.data}
-            size='small'
-            type='video'
-            shouldWrap={true}
-            nextDataFetchOption={{
-              isFetching: globalSearch.isFetching,
-              hasNext: Boolean(globalSearch.hasNextPage),
-              fetchNextData: globalSearch.fetchNextPage,
-            }}
-          />
-        </div>
-      </Layout>
+      <div className={styles.sectionWrapperWithoutBanner}>
+        <SectionCards
+          title=''
+          datas={globalSearch.data}
+          size='small'
+          type='video'
+          shouldWrap={true}
+          nextDataFetchOption={{
+            isFetching: globalSearch.isFetching,
+            hasNext: Boolean(globalSearch.hasNextPage),
+            fetchNextData: globalSearch.fetchNextPage,
+          }}
+        />
+      </div>
     );
   }
 
   return (
-    <Layout>
-      <div className={styles.sectionWrapper}>
-        <NoData />
-      </div>
-    </Layout>
-  );
-}
-
-const Layout = ({ children }: { children: ReactNode }) => {
-  return (
-    <div className={styles.container}>
-      <div className={styles.main}>
-        <NavBar />
-        {children}
-      </div>
+    <div className={styles.sectionWrapper}>
+      <NoData />
     </div>
   );
-};
+}

@@ -2,7 +2,7 @@ import { getPlaylists, getVideos, getVideosWithKeyword } from '@/lib/videos';
 import getQueryClient from '@/utils/getQueryClient';
 import RQHydrate from '@/utils/rq_hydrate_client';
 import { dehydrate } from '@tanstack/react-query';
-import { keywords } from './constant';
+import { keywords } from '../constant';
 import Home from './home_client';
 
 const requestInit = { next: { revalidate: 60 * 60 } };
