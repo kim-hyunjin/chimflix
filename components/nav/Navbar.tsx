@@ -2,7 +2,6 @@ import Link from 'next/link';
 
 import styles from './Navbar.module.css';
 
-import Image from 'next/image';
 import Logo from './Logo';
 import { MouseEventHandler, useCallback, useState, useEffect, ChangeEventHandler } from 'react';
 

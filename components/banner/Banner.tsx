@@ -1,6 +1,6 @@
 import styles from './Banner.module.css';
 
-import Image from 'next/image';
+import Image from "next/legacy/image";
 import { useRouter } from 'next/router';
 
 const Banner = (props: { videoId: string; title: string; imgUrl: string }) => {
