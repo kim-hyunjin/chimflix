@@ -1,4 +1,4 @@
-import { getSavedVideos, getWatchingNowVideos } from '@/lib/db/hasura';
+import { getWatchingNowVideos } from '@/lib/db/hasura';
 import { getIssuerFromToken } from '@/lib/token';
 import type { NextApiRequest, NextApiResponse } from 'next';
 

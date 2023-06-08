@@ -13,7 +13,7 @@ import DisLike from '@/components/icons/DisLike';
 import { Stats } from '@/types/hasura';
 import Saved from '@/components/icons/Saved';
 
-import Youtube, { YouTubeEvent } from 'react-youtube';
+import Youtube from 'react-youtube';
 import NoData from '@/components/error/NoData';
 
 Modal.setAppElement('#root');
@@ -35,14 +35,7 @@ export default function VideoDetail({
 
   useEffect(() => {
     return () => {
-      if (youtubeRef.current && updateHandler) {
-        const currentTime = youtubeRef.current.getCurrentTime();
-        updateHandler.updatePlayedTime(currentTime);
-
-        if (youtubeRef.current.playerInfo.duration - currentTime < 30) {
-          updateHandler.updateWatched();
-        }
-      }
+      handlePause();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -51,16 +44,11 @@ export default function VideoDetail({
     router.back();
   }, [router]);
 
-  const handlePause = (e: YouTubeEvent<number>) => {
-    if (!updateHandler) return;
-    const { updatePlayedTime, updateWatched } = updateHandler;
-
-    const currentTime = e.target.getCurrentTime();
-    updatePlayedTime(currentTime);
-
-    if (e.target.playerInfo.duration - currentTime < 30) {
-      updateWatched();
-    }
+  const handlePause = () => {
+    if (!updateHandler || !youtubeRef.current) return;
+    const currentTime = youtubeRef.current.getCurrentTime();
+    const isWatched = youtubeRef.current.playerInfo.duration - currentTime < 30;
+    updateHandler.updatePlayedTimeAndWatched(currentTime, isWatched);
   };
 
   if (!video) {

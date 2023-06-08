@@ -7,10 +7,10 @@ async function fetchGraphQL(
   variables: any,
   token: string
 ) {
-  const result = await fetch(String(process.env.NEXT_PUBLIC_HASURA_URL), {
+  const result = await fetch(String(process.env.HASURA_URL), {
     method: 'POST',
     headers: {
-      'x-hasura-admin-secret': String(process.env.NEXT_PUBLIC_HASURA_SECRET),
+      'x-hasura-admin-secret': String(process.env.HASURA_SECRET),
       Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify({
@@ -81,9 +81,28 @@ const operationsDoc = `
     }
   }
 
-  mutation UpdateStats($favourited: Int, $userId: String!, $watched: Boolean!, $saved: Boolean!, $playedTime: Int!, $videoId: String!) {
+  mutation UpdateFavsAndSaved($userId: String!, $videoId: String!, $favourited: Int, $saved: Boolean!) {
     update_stats(
-      _set: {watched: $watched, favourited: $favourited, saved: $saved, playedTime: $playedTime}, 
+      _set: {favourited: $favourited, saved: $saved}, 
+      where: {
+        userId: {_eq: $userId}, 
+        videoId: {_eq: $videoId}
+      }) {
+      returning {
+        id
+        userId
+        videoId
+        favourited
+        watched
+        saved
+        playedTime
+      }
+    }
+  }
+
+  mutation UpdateTimeAndWatched($userId: String!, $videoId: String!, $watched: Boolean!, $playedTime: Int!) {
+    update_stats(
+      _set: {watched: $watched, playedTime: $playedTime}, 
       where: {
         userId: {_eq: $userId}, 
         videoId: {_eq: $videoId}
@@ -189,17 +208,31 @@ export async function insertStats(token: string, issuer: string, videoId: string
   return created.data.insert_stats_one;
 }
 
-export async function updateStats(
+export async function updateFavAndSavedStats(
   token: string,
   metadata: {
-    favourited: number | null;
     userId: string;
-    watched: boolean;
-    saved: boolean;
     videoId: string;
+    favourited: number | null;
+    saved: boolean;
   }
 ): Promise<Stats> {
-  const res = await fetchGraphQL(operationsDoc, 'UpdateStats', metadata, token);
+  // console.log({ token, metadata });
+  const res = await fetchGraphQL(operationsDoc, 'UpdateFavsAndSaved', metadata, token);
+  return res.data.update_stats.returning[0];
+}
+
+export async function updateTimeAndWatchedStats(
+  token: string,
+  metadata: {
+    userId: string;
+    videoId: string;
+    playedTime: number;
+    watched: boolean;
+  }
+): Promise<Stats> {
+  // console.log({ token, metadata });
+  const res = await fetchGraphQL(operationsDoc, 'UpdateTimeAndWatched', metadata, token);
   return res.data.update_stats.returning[0];
 }
 
