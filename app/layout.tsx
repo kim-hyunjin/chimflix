@@ -17,7 +17,7 @@ export const metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang='kr' className={roboto.className}>
-      <body>
+      <body id='root'>
         <Providers>{children}</Providers>
       </body>
     </html>

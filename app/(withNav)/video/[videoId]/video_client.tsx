@@ -1,62 +1,33 @@
-import { useRouter } from 'next/router';
-import { ReactNode, useCallback, useEffect, useRef } from 'react';
+'use client';
+
+import { useRouter, useParams } from 'next/navigation';
+import { useCallback, useEffect, useRef } from 'react';
 import Modal from 'react-modal';
-import clsx from 'classnames';
 
 import styles from '@/styles/Video.module.css';
-import { getVideoDetail } from '@/lib/videos';
 import { VideoInfo } from '@/types/youtube';
-import { GetServerSideProps } from 'next';
-import NavBar from '@/components/nav/Navbar';
 import useVideoStatUpdateHandler, { LIKE } from '@/hooks/useVideoStatUpdateHandler';
 import Like from '@/components/icons/Like';
 import DisLike from '@/components/icons/DisLike';
 
-import { createNewStats, getStatsData } from 'pages/api/stats';
 import { Stats } from '@/types/hasura';
 import Saved from '@/components/icons/Saved';
 
 import Youtube, { YouTubeEvent } from 'react-youtube';
+import NoData from '@/components/error/NoData';
 
-Modal.setAppElement('#__next');
+Modal.setAppElement('#root');
 
-export const getServerSideProps: GetServerSideProps = async ({ params, req }) => {
-  const videoId = String(params?.videoId);
-  const token = req.cookies.token;
-
-  if (!token) {
-    const video = await getVideoDetail(videoId);
-    return {
-      props: {
-        video,
-        stats: null,
-      },
-    };
-  }
-
-  const [video, stats] = await Promise.all([getVideoDetail(videoId), getStatsData(token, videoId)]);
-
-  if (stats) {
-    return {
-      props: {
-        video,
-        stats,
-      },
-    };
-  }
-
-  const newStats = await createNewStats(token, videoId);
-  return {
-    props: {
-      video,
-      stats: newStats,
-    },
-  };
-};
-
-const Video = ({ video, stats }: { video: VideoInfo; stats: Stats | null }) => {
+export default function VideoDetail({
+  video,
+  stats,
+}: {
+  video: VideoInfo | null;
+  stats: Stats | null;
+}) {
   const router = useRouter();
-  const { videoId } = router.query;
+  const params = useParams();
+  const videoId = params?.['videoId'];
 
   const updateHandler = useVideoStatUpdateHandler(stats);
 
@@ -92,11 +63,14 @@ const Video = ({ video, stats }: { video: VideoInfo; stats: Stats | null }) => {
     }
   };
 
+  if (!video) {
+    return <NoData />;
+  }
+
   const { title, publishedAt, description, viewCount } = video;
 
   return (
-    <div className={styles.container}>
-      <NavBar />
+    <div>
       <Modal
         isOpen={true}
         contentLabel='Watch the video'
@@ -156,6 +130,4 @@ const Video = ({ video, stats }: { video: VideoInfo; stats: Stats | null }) => {
       </Modal>
     </div>
   );
-};
-
-export default Video;
+}
