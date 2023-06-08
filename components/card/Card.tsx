@@ -1,4 +1,4 @@
-import Image from "next/legacy/image";
+import Image from "next/image";
 
 import cls from 'classnames';
 import { motion } from 'framer-motion';
@@ -41,10 +41,10 @@ const Card = ({ imgUrl, elemIndex, size = 'medium' }: CardProps) => {
         <Image
           src={imgSrc}
           alt='image'
-          layout='fill'
           className={styles.cardImg}
           onError={handleOnError}
-        />
+          fill
+          sizes="100vw" />
       </motion.div>
     </div>
   );
