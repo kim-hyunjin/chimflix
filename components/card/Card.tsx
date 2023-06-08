@@ -1,10 +1,11 @@
-import Image from "next/image";
+import Image from 'next/image';
 
 import cls from 'classnames';
 import { motion } from 'framer-motion';
 
 import styles from './Card.module.css';
 import { ReactEventHandler, useCallback, useMemo, useState } from 'react';
+import { rgbDataURL } from '@/utils/blur_data';
 
 const DEFAULT_IMAGE_SRC =
   'https://images.unsplash.com/photo-1485846234645-a62644f84728?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1340&q=80';
@@ -17,11 +18,11 @@ interface CardProps {
 const Card = ({ imgUrl, elemIndex, size = 'medium' }: CardProps) => {
   const [imgSrc, setImgSrc] = useState(imgUrl);
 
-  const classMap = useMemo(
+  const cardStyleMap = useMemo(
     () => ({
-      large: styles.lgItem,
-      medium: styles.mdItem,
-      small: styles.smItem,
+      large: { classname: styles.lgItem, imageWidth: 440, imageHeight: 248 },
+      medium: { classname: styles.mdItem, imageWidth: 300, imageHeight: 165 },
+      small: { classname: styles.smItem, imageWidth: 300, imageHeight: 170 },
     }),
     []
   );
@@ -35,7 +36,7 @@ const Card = ({ imgUrl, elemIndex, size = 'medium' }: CardProps) => {
   return (
     <div className={styles.container}>
       <motion.div
-        className={cls(styles.imgMotionWrapper, classMap[size])}
+        className={cls(styles.imgMotionWrapper, cardStyleMap[size].classname)}
         whileHover={{ ...whileOverScale }}
       >
         <Image
@@ -43,8 +44,12 @@ const Card = ({ imgUrl, elemIndex, size = 'medium' }: CardProps) => {
           alt='image'
           className={styles.cardImg}
           onError={handleOnError}
-          fill
-          sizes="100vw" />
+          width={cardStyleMap[size].imageWidth}
+          height={cardStyleMap[size].imageHeight}
+          quality={75}
+          placeholder='blur'
+          blurDataURL={rgbDataURL(220, 220, 220)}
+        />
       </motion.div>
     </div>
   );
