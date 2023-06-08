@@ -1,14 +1,15 @@
-import Head from 'next/head';
+'use client';
+
 import Logo from '@/components/nav/Logo';
 
 import styles from '@/styles/Login.module.css';
 import { ChangeEventHandler, MouseEventHandler, useCallback, useState } from 'react';
 import { emailValidator } from '@/lib/validator';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 
 import { magic } from '@/lib/magic-client';
 
-const Login = () => {
+export default function Login() {
   const [email, setEmail] = useState<string>('');
   const [userMsg, setUserMsg] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -69,9 +70,6 @@ const Login = () => {
 
   return (
     <div className={styles.container}>
-      <Head>
-        <title>Chimflix Signin</title>
-      </Head>
       <header className={styles.header}>
         <div className={styles.headerWrapper}>
           <Logo />
@@ -98,6 +96,4 @@ const Login = () => {
       </main>
     </div>
   );
-};
-
-export default Login;
+}
