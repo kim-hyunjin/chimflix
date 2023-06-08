@@ -22,9 +22,9 @@
     "jotai": "^2.0.4",
     "jsonwebtoken": "^9.0.0",
     "magic-sdk": "^13.3.0",
-    "next": "12.3.0",
-    "react": "18.2.0",
-    "react-dom": "18.2.0",
+    "next": "latest",
+    "react": "latest",
+    "react-dom": "latest",
     "react-modal": "^3.16.1",
     "react-youtube": "^10.1.0"
   },
@@ -36,7 +36,7 @@
     "@types/react-dom": "18.0.6",
     "@types/react-modal": "^3.13.1",
     "eslint": "8.23.1",
-    "eslint-config-next": "12.3.0",
+    "eslint-config-next": "latest",
     "typescript": "4.8.3"
   },
   "packageManager": "yarn@3.4.1"
