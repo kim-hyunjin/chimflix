@@ -5,7 +5,7 @@ import { dehydrate } from '@tanstack/react-query';
 import { keywords } from '../constant';
 import Home from './home_client';
 
-const requestInit = { next: { revalidate: 60 * 60 } };
+export const revalidate = 3600; // 1hour
 
 export default async function Page() {
   // const noData = { datas: [], nextPageToken: null };
@@ -33,16 +33,12 @@ export default async function Page() {
 
   const queryClient = getQueryClient();
   await Promise.allSettled([
-    queryClient.prefetchInfiniteQuery(['recentVideos'], () =>
-      getVideos({ order: 'date', requestInit })
-    ),
-    queryClient.prefetchInfiniteQuery(['popularVideos'], () =>
-      getVideos({ order: 'viewCount', requestInit })
-    ),
-    queryClient.prefetchInfiniteQuery(['playlists'], () => getPlaylists(undefined, requestInit)),
+    queryClient.prefetchInfiniteQuery(['recentVideos'], () => getVideos({ order: 'date' })),
+    queryClient.prefetchInfiniteQuery(['popularVideos'], () => getVideos({ order: 'viewCount' })),
+    queryClient.prefetchInfiniteQuery(['playlists'], () => getPlaylists(undefined)),
     keywords.map(({ title, keyword }) =>
       queryClient.prefetchInfiniteQuery(['searchVideo', keyword], () =>
-        getVideosWithKeyword({ title, keyword, requestInit })
+        getVideosWithKeyword({ title, keyword })
       )
     ),
   ]);
