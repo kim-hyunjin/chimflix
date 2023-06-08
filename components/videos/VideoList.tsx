@@ -12,17 +12,17 @@ const VideoList = ({ videos }: { videos: YoutubeSnippet[] }) => {
           <div className={styles.listItemLeft}>
             <div className={styles.listItemNumber}>{i + 1}</div>
             <Link href={`/video/${v.id}`}>
-              <a>
-                {/* <iframe
-            id='ytplayer'
-            width='200'
-            height='100'
-            src={`https://www.youtube.com/embed/${v.id}`}
-            frameBorder='0'
-            allowFullScreen
-          ></iframe> */}
-                <Card imgUrl={v.imgUrl} size='small' elemIndex={i} />
-              </a>
+
+              {/* <iframe
+          id='ytplayer'
+          width='200'
+          height='100'
+          src={`https://www.youtube.com/embed/${v.id}`}
+          frameBorder='0'
+          allowFullScreen
+        ></iframe> */}
+              <Card imgUrl={v.imgUrl} size='small' elemIndex={i} />
+
             </Link>
           </div>
 

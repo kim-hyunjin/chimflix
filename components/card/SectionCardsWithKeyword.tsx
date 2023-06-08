@@ -45,11 +45,11 @@ const SectionCardsWithKeyword = ({
         style={!shouldWrap ? scrollStyle : undefined}
       >
         {data.map((data, i) => (
-          <Link key={data.id} href={`/video/${data.id}`}>
-            <a>
-              <Card imgUrl={data.imgUrl} size={size} elemIndex={i} />
-            </a>
-          </Link>
+          (<Link key={data.id} href={`/video/${data.id}`}>
+
+            <Card imgUrl={data.imgUrl} size={size} elemIndex={i} />
+
+          </Link>)
         ))}
         {hasNextPage && <div ref={setTargeEl}></div>}
       </div>

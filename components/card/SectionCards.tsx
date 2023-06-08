@@ -42,11 +42,11 @@ const SectionCards = (props: SectionCardsProps) => {
         style={!shouldWrap ? scrollStyle : undefined}
       >
         {datas.map((data, i) => (
-          <Link key={data.id} href={`/${type}/${data.id}`}>
-            <a>
-              <Card imgUrl={data.imgUrl} size={size} elemIndex={i} />
-            </a>
-          </Link>
+          (<Link key={data.id} href={`/${type}/${data.id}`}>
+
+            <Card imgUrl={data.imgUrl} size={size} elemIndex={i} />
+
+          </Link>)
         ))}
         {props.nextDataFetchOption?.hasNext && <div ref={setTargeEl}></div>}
       </div>
