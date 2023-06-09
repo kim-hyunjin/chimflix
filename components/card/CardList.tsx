@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import Card from './Card';
 import { YoutubeSnippet } from '@/types/youtube';
+import { mobileCardSize, pcCardSize } from './constant';
 
 type Props = {
   title: string;
@@ -33,9 +34,12 @@ export default function CardList({
 
   const { setTargeEl } = useInfiniteScroll(isFetching, fetchNextData);
 
+  const isMobile = window.innerWidth <= 450;
+
   const handleGoLeft = () => {
     setX((prev) => {
-      const target = prev + window.innerWidth - 300;
+      const c = isMobile ? 0 : 300;
+      const target = prev + window.innerWidth - c;
       if (target > 0) return 0;
       return target;
     });
@@ -43,9 +47,12 @@ export default function CardList({
 
   const handleGoRight = () => {
     setX((prev) => {
-      const target = prev - window.innerWidth + 300;
+      const c = isMobile ? 0 : 300;
+      const target = prev - window.innerWidth + c;
+      const cardSize = isMobile ? mobileCardSize[size].width : pcCardSize[size].width;
+      const maxX = -(videos.length * cardSize - window.innerWidth + c);
+      console.log({ prev, target, maxX });
       if (!maxX && !hasNext) {
-        const maxX = -(videos.length * (size === 'large' ? 440 : 300) - window.innerWidth + 300);
         setMaxX(maxX);
         return maxX;
       }
@@ -60,11 +67,7 @@ export default function CardList({
     });
   };
 
-  const wrapperSizeMap = {
-    large: '300px',
-    medium: '200px',
-    small: '200px',
-  };
+  const wrapperHeight = isMobile ? mobileCardSize[size].height + 10 : pcCardSize[size].height + 20;
 
   return (
     <section className={styles.container}>
@@ -86,7 +89,7 @@ export default function CardList({
               onClick={handleGoRight}
               whileHover={{ backgroundColor: 'rgba(0, 0, 0, 0.9)' }}
             >
-              <div className={styles.leftRight}></div>
+              <div className={styles.rightArrow}></div>
             </motion.button>
           )}
         </>
@@ -95,7 +98,7 @@ export default function CardList({
         className={clsx(styles.cardWrapper, shouldWrap && styles.wrap, size)}
         animate={{ x }}
         transition={{ ease: 'linear' }}
-        style={{ height: wrapperSizeMap[size] }}
+        style={{ height: `${wrapperHeight}px` }}
       >
         {videos.map((data, i) => (
           <Link key={data.id} href={`/${type}/${data.id}`}>

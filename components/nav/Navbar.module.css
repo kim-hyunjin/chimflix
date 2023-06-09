@@ -222,4 +222,8 @@
   .mobileSearchBoxActive {
     display: flex !important;
   }
+
+  .navItem {
+    font-size: 1rem;
+  }
 }
