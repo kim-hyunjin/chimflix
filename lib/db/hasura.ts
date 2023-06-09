@@ -81,9 +81,28 @@ const operationsDoc = `
     }
   }
 
-  mutation UpdateFavsAndSaved($userId: String!, $videoId: String!, $favourited: Int, $saved: Boolean!) {
+  mutation UpdateFavs($userId: String!, $videoId: String!, $favourited: Int) {
     update_stats(
-      _set: {favourited: $favourited, saved: $saved}, 
+      _set: {favourited: $favourited}, 
+      where: {
+        userId: {_eq: $userId}, 
+        videoId: {_eq: $videoId}
+      }) {
+      returning {
+        id
+        userId
+        videoId
+        favourited
+        watched
+        saved
+        playedTime
+      }
+    }
+  }
+
+  mutation UpdateSaved($userId: String!, $videoId: String!, $saved: Boolean!) {
+    update_stats(
+      _set: {saved: $saved}, 
       where: {
         userId: {_eq: $userId}, 
         videoId: {_eq: $videoId}
@@ -208,17 +227,29 @@ export async function insertStats(token: string, issuer: string, videoId: string
   return created.data.insert_stats_one;
 }
 
-export async function updateFavAndSavedStats(
+export async function updateFavStats(
   token: string,
   metadata: {
     userId: string;
     videoId: string;
     favourited: number | null;
+  }
+): Promise<Stats> {
+  // console.log({ token, metadata });
+  const res = await fetchGraphQL(operationsDoc, 'UpdateFavs', metadata, token);
+  return res.data.update_stats.returning[0];
+}
+
+export async function updateSavedStats(
+  token: string,
+  metadata: {
+    userId: string;
+    videoId: string;
     saved: boolean;
   }
 ): Promise<Stats> {
   // console.log({ token, metadata });
-  const res = await fetchGraphQL(operationsDoc, 'UpdateFavsAndSaved', metadata, token);
+  const res = await fetchGraphQL(operationsDoc, 'UpdateSaved', metadata, token);
   return res.data.update_stats.returning[0];
 }
 

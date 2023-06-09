@@ -1,95 +1,50 @@
-import { Stats } from '@/types/hasura';
-import { useState } from 'react';
-import { flushSync } from 'react-dom';
+import { LIKE } from '@/types/youtube';
+import useStatsMutator from './mutate/useStatsMutator';
+import useFetchStats from './query/useFetchStats';
 
-export enum LIKE {
-  DISLIKE,
-  LIKE,
-}
+const useVideoStatUpdateHandler = (videoId: string) => {
+  const { data: stats } = useFetchStats(videoId);
 
-const updateStatsByAction = async (newStats: {
-  videoId: string;
-  favourited: LIKE | null;
-  saved: boolean;
-}): Promise<void> => {
-  fetch('/api/stats', {
-    method: 'POST',
-    body: JSON.stringify(newStats),
-    headers: { 'Content-Type': 'application/json' },
-  });
-};
-
-const updateStatsTimeAndWatched = async (newStats: {
-  videoId: string;
-  playedTime: number;
-  watched: boolean;
-}): Promise<void> => {
-  fetch('/api/stats', {
-    method: 'POST',
-    body: JSON.stringify(newStats),
-    headers: { 'Content-Type': 'application/json' },
-  });
-};
-
-const useVideoStatUpdateHandler = (stats: Stats | null) => {
-  const [favourited, setFavourited] = useState<LIKE | null>(stats?.favourited ?? null);
-  const [saved, setSaved] = useState(stats?.saved ?? false);
+  const mutate = useStatsMutator();
 
   if (!stats) {
     return null;
   }
 
   const handleToggleDislike = async () => {
-    const newFav = favourited === LIKE.DISLIKE ? null : LIKE.DISLIKE;
-    flushSync(() => {
-      setFavourited(newFav);
-    });
-
-    updateStatsByAction({
-      videoId: stats.videoId,
+    const newFav = stats.favourited === LIKE.DISLIKE ? null : LIKE.DISLIKE;
+    mutate({
+      videoId,
       favourited: newFav,
-      saved,
     });
   };
 
   const handleToggleLike = async () => {
-    const newFav = favourited === LIKE.LIKE ? null : LIKE.LIKE;
-    flushSync(() => {
-      setFavourited(newFav);
-    });
-
-    updateStatsByAction({
-      videoId: stats.videoId,
+    const newFav = stats.favourited === LIKE.LIKE ? null : LIKE.LIKE;
+    mutate({
+      videoId,
       favourited: newFav,
-      saved,
     });
   };
 
   const handleToggleSave = async () => {
-    const newVal = !saved;
-    flushSync(() => {
-      setSaved(newVal);
-    });
-
-    updateStatsByAction({
-      videoId: stats.videoId,
-      favourited,
+    const newVal = !stats.saved;
+    mutate({
+      videoId,
       saved: newVal,
     });
   };
 
   const updatePlayedTimeAndWatched = async (time: number, watched: boolean) => {
     const intTime = Math.floor(time);
-    updateStatsTimeAndWatched({
-      videoId: stats.videoId,
-      watched,
+    mutate({
+      videoId,
       playedTime: intTime,
+      watched,
     });
   };
 
   return {
-    favourited,
-    saved,
     handleToggleLike,
     handleToggleDislike,
     handleToggleSave,

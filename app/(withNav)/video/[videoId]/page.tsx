@@ -1,43 +1,36 @@
 import { getVideoDetail } from '@/lib/videos';
-import { createNewStats, getStatsData } from '@/app/api/stats/route';
-import { Stats } from '@/types/hasura';
+import { createNewStats, getStatsData } from '@/lib/stats';
 import { VideoInfo } from '@/types/youtube';
 import { cookies } from 'next/headers';
 import VideoDetail from './video_client';
+import getQueryClient from '@/utils/getQueryClient';
+import { dehydrate } from '@tanstack/react-query';
+import RQHydrate from '@/utils/rq_hydrate_client';
 
-async function getData(
-  videoId: string,
-  token?: string
-): Promise<{ video: VideoInfo | null; stats: Stats | null }> {
-  if (!token) {
-    const video = await getVideoDetail(videoId);
-    return {
-      video,
-      stats: null,
-    };
-  }
-
-  const [video, stats] = await Promise.all([getVideoDetail(videoId), getStatsData(token, videoId)]);
-
-  if (stats) {
-    return {
-      video,
-      stats,
-    };
-  }
-
-  const newStats = await createNewStats(token, videoId);
-  return {
-    video,
-    stats: newStats,
-  };
+async function getData(videoId: string): Promise<VideoInfo | null> {
+  return getVideoDetail(videoId);
 }
 
 export default async function Page({ params }: { params: { videoId: string } }) {
   const videoId = params.videoId;
   const token = cookies().get('token')?.value;
 
-  const props = await getData(videoId, token);
+  const queryClient = getQueryClient();
+  if (token) {
+    const stats = await getStatsData(token, videoId);
+    if (!stats) {
+      await createNewStats(token, videoId);
+    }
+    queryClient.prefetchQuery(['stats', token, videoId], () => stats);
+  }
 
-  return <VideoDetail {...props} />;
+  const dehydratedState = dehydrate(queryClient);
+  const video = await getData(videoId);
+
+  return (
+    <RQHydrate state={dehydratedState}>
+      {' '}
+      <VideoDetail video={video} />
+    </RQHydrate>
+  );
 }

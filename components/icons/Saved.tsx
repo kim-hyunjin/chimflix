@@ -8,17 +8,16 @@ const Saved = ({ saved, onClick }: { saved: boolean; onClick: () => void }) => {
   const [startTrans, setStartTrans] = useState(false);
 
   const handleClick = () => {
-    if (!startTrans) {
-      flushSync(() => setStartTrans(true));
-      onClick();
-    }
+    flushSync(() => setStartTrans(true));
+    onClick();
+    setStartTrans(false);
   };
   return (
     <button onClick={handleClick} style={{ width: '1.8rem' }}>
       {saved ? (
         <FontAwesomeIcon icon={faCheck} style={{ color: '#ffffff' }} />
       ) : (
-        <motion.div animate={startTrans ? { rotate: 90 } : false}>
+        <motion.div animate={startTrans ? { rotate: 120 } : false}>
           <FontAwesomeIcon icon={faPlus} style={{ color: '#ffffff' }} />
         </motion.div>
       )}

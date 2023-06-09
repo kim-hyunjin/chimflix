@@ -17,3 +17,11 @@ export const checkTokenExist = () => {
 
   return !!token;
 };
+
+export const getTokenFromCookie = () => {
+  if (typeof document === 'undefined') return undefined;
+
+  const token = cookie.parse(document.cookie).token;
+
+  return token;
+};
