@@ -1,12 +1,6 @@
-import useHorizontalScrolling from '@/hooks/useHorizontalScrolling';
-import Link from 'next/link';
 import { YoutubeSnippet } from '../../types/youtube';
-import Card from './Card';
 
-import clsx from 'classnames';
-
-import styles from './SectionCards.module.css';
-import useInfiniteScroll from '@/hooks/useInfiniteScroll';
+import CardList from './CardList';
 
 interface SectionCardsProps {
   title: string;
@@ -21,34 +15,22 @@ interface SectionCardsProps {
   };
 }
 const SectionCards = (props: SectionCardsProps) => {
-  const { title, datas = [], type, size, shouldWrap, nextDataFetchOption } = props;
-
-  const { scrollRef, onWheel, scrollStyle } = useHorizontalScrolling();
-  const { setTargeEl } = useInfiniteScroll(
-    nextDataFetchOption?.isFetching,
-    nextDataFetchOption?.fetchNextData
-  );
+  const { title, datas = [], type, size = 'medium', shouldWrap, nextDataFetchOption } = props;
 
   if (datas.length === 0) {
     return null;
   }
   return (
-    <section className={styles.container}>
-      <h2 className={styles.title}>{title}</h2>
-      <div
-        ref={scrollRef}
-        className={clsx(styles.cardWrapper, shouldWrap && styles.wrap)}
-        onWheel={!shouldWrap ? onWheel : undefined}
-        style={!shouldWrap ? scrollStyle : undefined}
-      >
-        {datas.map((data, i) => (
-          <Link key={data.id} href={`/${type}/${data.id}`}>
-            <Card imgUrl={data.imgUrl} alt={data.title} size={size} elemIndex={i} />
-          </Link>
-        ))}
-        {props.nextDataFetchOption?.hasNext && <div ref={setTargeEl}></div>}
-      </div>
-    </section>
+    <CardList
+      title={title}
+      videos={datas}
+      type={type}
+      isFetching={nextDataFetchOption?.isFetching}
+      fetchNextData={nextDataFetchOption?.fetchNextData}
+      hasNext={nextDataFetchOption?.hasNext}
+      size={size}
+      shouldWrap={shouldWrap}
+    />
   );
 };
 
