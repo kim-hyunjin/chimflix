@@ -15,3 +15,8 @@ export interface PlaylistInfo {
   description: string;
   publishedAt: string;
 }
+
+export enum LIKE {
+  DISLIKE,
+  LIKE,
+}

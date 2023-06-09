@@ -43,9 +43,7 @@ const SectionCards = (props: SectionCardsProps) => {
       >
         {datas.map((data, i) => (
           <Link key={data.id} href={`/${type}/${data.id}`}>
-            <a>
-              <Card imgUrl={data.imgUrl} size={size} elemIndex={i} />
-            </a>
+            <Card imgUrl={data.imgUrl} alt={data.title} size={size} elemIndex={i} />
           </Link>
         ))}
         {props.nextDataFetchOption?.hasNext && <div ref={setTargeEl}></div>}

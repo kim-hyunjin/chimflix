@@ -1,13 +1,14 @@
+'use client';
+
 import Link from 'next/link';
 
 import styles from './Navbar.module.css';
 
-import Image from 'next/image';
 import Logo from './Logo';
 import { MouseEventHandler, useCallback, useState, useEffect, ChangeEventHandler } from 'react';
 
 import { magic } from '@/lib/magic-client';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { checkTokenExist, removeTokenCookie } from '@/lib/cookies';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass, faUser } from '@fortawesome/free-solid-svg-icons';
@@ -102,28 +103,27 @@ const NavBar = () => {
     <>
       <div className={scrollY === 0 ? styles.container : styles.container2}>
         <div className={styles.wrapper}>
-          <Logo />
+          <div onClick={() => setSearchKeyword('')}>
+            <Logo />
+          </div>
           <div className={styles.navWrapper}>
             <ul className={styles.navItems}>
               {mounted && isLoggedIn && (
                 <li className={styles.navItem}>
-                  <Link href={'/browse/my-list'}>
-                    <a>내가 찜한 컨텐츠</a>
-                  </Link>
+                  <Link href={'/browse/my-list'}>내가 찜한 컨텐츠</Link>
                 </li>
               )}
             </ul>
 
             <nav className={styles.navContainer}>
               <motion.div
-                animate={{ width: sc ? '15rem' : '1.2rem' }}
+                animate={{ width: sc ? '25vw' : '1.2rem' }}
                 className={sc ? styles.searchBoxActive : styles.searchBox}
               >
                 <FontAwesomeIcon
                   icon={faMagnifyingGlass}
                   style={{
                     cursor: 'pointer',
-                    width: '1rem',
                   }}
                   onClick={() => setSearchClick(true)}
                 />
@@ -145,7 +145,6 @@ const NavBar = () => {
                   icon={faMagnifyingGlass}
                   style={{
                     cursor: 'pointer',
-                    width: '1rem',
                   }}
                   onClick={() => setSearchClick(true)}
                 />
@@ -194,8 +193,8 @@ const NavBar = () => {
           <div className={styles.userMenu} style={{ cursor: 'default' }}>
             {username}
           </div>
-          <Link href={'/browse/my-list'}>
-            <a className={styles.userMenu}>내가 찜한 컨텐츠</a>
+          <Link href={'/browse/my-list'} className={styles.userMenu}>
+            내가 찜한 컨텐츠
           </Link>
           <a className={styles.userMenu} onClick={handleSignout}>
             로그아웃

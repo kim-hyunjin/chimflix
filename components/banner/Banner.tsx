@@ -1,7 +1,7 @@
 import styles from './Banner.module.css';
 
 import Image from 'next/image';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 
 const Banner = (props: { videoId: string; title: string; imgUrl: string }) => {
   const { videoId, title, imgUrl } = props;
@@ -21,7 +21,16 @@ const Banner = (props: { videoId: string; title: string; imgUrl: string }) => {
 
           <div className={styles.playBtnWrapper}>
             <button className={styles.btnWithIcon} onClick={handleOnPlay}>
-              <Image src='/static/play_arrow.svg' alt='Play icon' width='32px' height='32px' />
+              <Image
+                src='/static/play_arrow.svg'
+                alt='Play icon'
+                width='32'
+                height='32'
+                style={{
+                  maxWidth: '100%',
+                  height: 'auto',
+                }}
+              />
               <span className={styles.playText}>Play</span>
             </button>
           </div>

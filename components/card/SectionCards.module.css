@@ -14,9 +14,10 @@
 
 .cardWrapper {
   display: flex;
-  margin-top: 1.7rem;
+  align-items: center;
   margin-bottom: 1.5rem;
   margin-right: 0.75rem /* 12px */;
+  height: 300px;
 }
 
 .wrap {

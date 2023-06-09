@@ -4,11 +4,11 @@ import styles from './Logo.module.css';
 
 const Logo = () => {
   return (
-    <Link href={'/'}>
-      <a className={styles.logoLink}>
-        <div className={styles.logoWrapper}>CHIMFLIX</div>
-      </a>
-    </Link>
+    (<Link href={'/'} className={styles.logoLink}>
+
+      <div className={styles.logoWrapper}>CHIMFLIX</div>
+
+    </Link>)
   );
 };
 
