@@ -1,5 +1,5 @@
 import { getVideoDetail } from '@/lib/videos';
-import { createNewStats, getStatsData } from '@/pages/api/stats';
+import { createNewStats, getStatsData } from '@/app/api/stats/route';
 import { Stats } from '@/types/hasura';
 import { VideoInfo } from '@/types/youtube';
 import { cookies } from 'next/headers';
