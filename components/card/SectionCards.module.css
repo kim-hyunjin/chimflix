@@ -41,7 +41,7 @@
   position: absolute;
   left: 0rem;
   width: 3.5rem;
-  height: 80%;
+  height: 85%;
   background-color: rgba(0, 0, 0, 0.6);
   z-index: 100;
   display: flex;
@@ -52,7 +52,7 @@
   position: absolute;
   right: 0rem;
   width: 3.5rem;
-  height: 80%;
+  height: 85%;
   background-color: rgba(0, 0, 0, 0.6);
   z-index: 100;
   display: flex;
