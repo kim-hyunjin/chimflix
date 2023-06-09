@@ -103,7 +103,9 @@ const NavBar = () => {
     <>
       <div className={scrollY === 0 ? styles.container : styles.container2}>
         <div className={styles.wrapper}>
-          <Logo />
+          <div onClick={() => setSearchKeyword('')}>
+            <Logo />
+          </div>
           <div className={styles.navWrapper}>
             <ul className={styles.navItems}>
               {mounted && isLoggedIn && (
