@@ -32,7 +32,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@fortawesome/free-regular-svg-icons", "npm:6.4.0"],\
             ["@fortawesome/free-solid-svg-icons", "npm:6.4.0"],\
             ["@fortawesome/react-fontawesome", "virtual:3ade62c106a81ac18e9fae63ce373e001ed5f48e81e25a57011021821da014a3aabaec01d8e4d31104c1a97fdfab085fc9b44b86a0920a1e46a2e911a6d94b9b#npm:0.2.0"],\
-            ["@magic-sdk/admin", "npm:1.9.2"],\
+            ["@magic-sdk/admin", "npm:1.10.0"],\
             ["@tanstack/react-query", "virtual:3ade62c106a81ac18e9fae63ce373e001ed5f48e81e25a57011021821da014a3aabaec01d8e4d31104c1a97fdfab085fc9b44b86a0920a1e46a2e911a6d94b9b#npm:4.29.5"],\
             ["@tanstack/react-query-devtools", "virtual:3ade62c106a81ac18e9fae63ce373e001ed5f48e81e25a57011021821da014a3aabaec01d8e4d31104c1a97fdfab085fc9b44b86a0920a1e46a2e911a6d94b9b#npm:4.29.6"],\
             ["@types/cookie", "npm:0.5.1"],\
@@ -363,14 +363,14 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["@magic-sdk/admin", [\
-        ["npm:1.9.2", {\
-          "packageLocation": "./.yarn/cache/@magic-sdk-admin-npm-1.9.2-2bbac827c8-f9a28bc649.zip/node_modules/@magic-sdk/admin/",\
+        ["npm:1.10.0", {\
+          "packageLocation": "./.yarn/cache/@magic-sdk-admin-npm-1.10.0-2b63539e66-d9685230db.zip/node_modules/@magic-sdk/admin/",\
           "packageDependencies": [\
-            ["@magic-sdk/admin", "npm:1.9.2"],\
+            ["@magic-sdk/admin", "npm:1.10.0"],\
             ["@types/atob", "npm:2.1.2"],\
             ["atob", "npm:2.1.2"],\
             ["ethereum-cryptography", "npm:1.2.0"],\
-            ["node-fetch", "virtual:2bbac827c8a1dab08880ccfdb85976291522cadd7f3ab21cdc4fe610d4616fea3bdd53b21663bb11567324cf1762ec068913f0d7a0b5ff289aa8c2a5df30c8dd#npm:2.6.9"]\
+            ["node-fetch", "virtual:2b63539e66abc6427674847066002dce0fa13d43f3548a3128f6250f87c39fd477fa50d3ef2729205b5e4f7d85757882c44f572837267f16503c54d2a3482d7c#npm:2.6.9"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -4568,10 +4568,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],\
           "linkType": "SOFT"\
         }],\
-        ["virtual:2bbac827c8a1dab08880ccfdb85976291522cadd7f3ab21cdc4fe610d4616fea3bdd53b21663bb11567324cf1762ec068913f0d7a0b5ff289aa8c2a5df30c8dd#npm:2.6.9", {\
-          "packageLocation": "./.yarn/__virtual__/node-fetch-virtual-cf902c9bb0/0/cache/node-fetch-npm-2.6.9-9fc9a54529-acb04f9ce7.zip/node_modules/node-fetch/",\
+        ["virtual:2b63539e66abc6427674847066002dce0fa13d43f3548a3128f6250f87c39fd477fa50d3ef2729205b5e4f7d85757882c44f572837267f16503c54d2a3482d7c#npm:2.6.9", {\
+          "packageLocation": "./.yarn/__virtual__/node-fetch-virtual-d719dc1639/0/cache/node-fetch-npm-2.6.9-9fc9a54529-acb04f9ce7.zip/node_modules/node-fetch/",\
           "packageDependencies": [\
-            ["node-fetch", "virtual:2bbac827c8a1dab08880ccfdb85976291522cadd7f3ab21cdc4fe610d4616fea3bdd53b21663bb11567324cf1762ec068913f0d7a0b5ff289aa8c2a5df30c8dd#npm:2.6.9"],\
+            ["node-fetch", "virtual:2b63539e66abc6427674847066002dce0fa13d43f3548a3128f6250f87c39fd477fa50d3ef2729205b5e4f7d85757882c44f572837267f16503c54d2a3482d7c#npm:2.6.9"],\
             ["@types/encoding", null],\
             ["encoding", null],\
             ["whatwg-url", "npm:5.0.0"]\
@@ -6543,7 +6543,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@fortawesome/free-regular-svg-icons", "npm:6.4.0"],\
             ["@fortawesome/free-solid-svg-icons", "npm:6.4.0"],\
             ["@fortawesome/react-fontawesome", "virtual:3ade62c106a81ac18e9fae63ce373e001ed5f48e81e25a57011021821da014a3aabaec01d8e4d31104c1a97fdfab085fc9b44b86a0920a1e46a2e911a6d94b9b#npm:0.2.0"],\
-            ["@magic-sdk/admin", "npm:1.9.2"],\
+            ["@magic-sdk/admin", "npm:1.10.0"],\
             ["@tanstack/react-query", "virtual:3ade62c106a81ac18e9fae63ce373e001ed5f48e81e25a57011021821da014a3aabaec01d8e4d31104c1a97fdfab085fc9b44b86a0920a1e46a2e911a6d94b9b#npm:4.29.5"],\
             ["@tanstack/react-query-devtools", "virtual:3ade62c106a81ac18e9fae63ce373e001ed5f48e81e25a57011021821da014a3aabaec01d8e4d31104c1a97fdfab085fc9b44b86a0920a1e46a2e911a6d94b9b#npm:4.29.6"],\
             ["@types/cookie", "npm:0.5.1"],\
