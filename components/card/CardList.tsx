@@ -1,5 +1,5 @@
 import useInfiniteScroll from '@/hooks/useInfiniteScroll';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import styles from './SectionCards.module.css';
 import clsx from 'classnames';
 import { motion } from 'framer-motion';
@@ -7,6 +7,7 @@ import Link from 'next/link';
 import Card from './Card';
 import { YoutubeSnippet } from '@/types/youtube';
 import { mobileCardSize, pcCardSize } from './constant';
+import useIsMobile from '@/hooks/useIsMobile';
 
 type Props = {
   title: string;
@@ -31,10 +32,8 @@ export default function CardList({
 }: Props) {
   const [x, setX] = useState(0);
   const [maxX, setMaxX] = useState<number | undefined>(undefined);
-
   const { setTargeEl } = useInfiniteScroll(isFetching, fetchNextData);
-
-  const isMobile = window.innerWidth <= 450;
+  const { isMobile } = useIsMobile();
 
   const handleGoLeft = () => {
     setX((prev) => {
