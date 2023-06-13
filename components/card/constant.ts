@@ -5,7 +5,7 @@ export const pcCardSize = {
 };
 
 export const mobileCardSize = {
-  large: { width: 440 / 2, height: 248 / 2 },
-  medium: { width: 300 / 2, height: 170 / 2 },
-  small: { width: 300 / 2, height: 170 / 2 },
+  large: { width: 100, height: 150 },
+  medium: { width: 90, height: 135 },
+  small: { width: 80, height: 120 },
 };

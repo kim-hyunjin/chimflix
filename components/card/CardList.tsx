@@ -8,6 +8,7 @@ import { YoutubeSnippet } from '@/types/youtube';
 import { mobileCardSize, pcCardSize } from './constant';
 import useIsMobile from '@/hooks/useIsMobile';
 import useCardsSlide from '@/hooks/useCardsSlide';
+import useHorizontalScrolling from '@/hooks/useHorizontalScrolling';
 
 type Props = {
   title: string;
@@ -34,13 +35,39 @@ export default function CardList({
   const { isMobile } = useIsMobile();
 
   const cardSize = isMobile ? mobileCardSize[size].width : pcCardSize[size].width;
-  const wrapperHeight = isMobile ? mobileCardSize[size].height + 10 : pcCardSize[size].height + 20;
+  const wrapperHeight = isMobile ? mobileCardSize[size].height + 30 : pcCardSize[size].height + 20;
 
   const { x, rightBtnVisivility, leftBtnVisivility, handleGoLeft, handleGoRight } = useCardsSlide({
     itemLength: videos.length,
     cardSize,
     hasNext: Boolean(hasNext),
   });
+  const { scrollRef, onWheel, scrollStyle } = useHorizontalScrolling();
+
+  if (isMobile) {
+    return (
+      <section className={styles.container}>
+        <h2 className={styles.title}>{title}</h2>
+        <div
+          ref={scrollRef}
+          className={clsx(styles.cardWrapper, shouldWrap && styles.wrap)}
+          onWheel={!shouldWrap ? onWheel : undefined}
+          style={
+            !shouldWrap
+              ? { ...scrollStyle, height: `${wrapperHeight}px` }
+              : { height: `${wrapperHeight}px` }
+          }
+        >
+          {videos.map((data, i) => (
+            <Link key={data.id} href={`/${type}/${data.id}`}>
+              <Card imgUrl={data.imgUrl} alt={data.title} size={size} elemIndex={i} />
+            </Link>
+          ))}
+          {hasNext && <div ref={setTargeEl}></div>}
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className={styles.container}>

@@ -1,4 +1,4 @@
-import { CSSProperties, useCallback, useMemo, useRef, WheelEventHandler } from 'react';
+import { CSSProperties, useCallback, useRef, WheelEventHandler } from 'react';
 
 const useHorizontalScrolling = <T extends HTMLElement = HTMLDivElement>() => {
   const scrollRef = useRef<T | null>(null);
@@ -13,14 +13,11 @@ const useHorizontalScrolling = <T extends HTMLElement = HTMLDivElement>() => {
     });
   }, []);
 
-  const scrollStyle: CSSProperties = useMemo(
-    () => ({
-      overflow: 'scroll',
-      overflowY: 'hidden',
-      overscrollBehavior: 'contain',
-    }),
-    []
-  );
+  const scrollStyle: CSSProperties = {
+    overflow: 'scroll',
+    overflowY: 'hidden',
+    overscrollBehavior: 'contain',
+  };
 
   return { scrollRef, onWheel, scrollStyle };
 };
