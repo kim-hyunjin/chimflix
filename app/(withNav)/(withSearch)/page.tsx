@@ -5,7 +5,7 @@ import { dehydrate } from '@tanstack/react-query';
 import { keywords } from './constant';
 import Home from './home_client';
 
-export const revalidate = 3600; // 1hour
+export const revalidate = 21600; // 6hour
 
 export default async function Page() {
   const queryClient = getQueryClient();
@@ -13,9 +13,9 @@ export default async function Page() {
     queryClient.prefetchInfiniteQuery(['recentVideos'], () => getVideos({ order: 'date' })),
     queryClient.prefetchInfiniteQuery(['popularVideos'], () => getVideos({ order: 'viewCount' })),
     queryClient.prefetchInfiniteQuery(['playlists'], () => getPlaylists(undefined)),
-    keywords.map(({ title, keyword }) =>
+    keywords.map(({ keyword }) =>
       queryClient.prefetchInfiniteQuery(['searchVideo', keyword], () =>
-        getVideosWithKeyword({ title, keyword })
+        getVideosWithKeyword({ keyword, order: 'relevance' })
       )
     ),
   ]);

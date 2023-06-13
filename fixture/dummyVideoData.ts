@@ -14,11 +14,11 @@ export const fetchDummyData = (pageToken?: string): YoutubeSnippetsWithPage => {
 };
 
 export const fetchDummyPlaylist = (): YoutubeSnippetsWithPage => {
-  return { datas: dummyPlaylist.json, nextPageToken: '123' };
+  return { datas: dummyPlaylist.json, nextPageToken: null };
 };
 
 export const fetchDummyPlaylistItem = (): YoutubeSnippetsWithPage => {
-  return { datas: dummyPlaylistItem[0].json, nextPageToken: '123' };
+  return { datas: dummyPlaylistItem[0].json, nextPageToken: null };
 };
 
 const dummyData = [

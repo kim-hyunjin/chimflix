@@ -4,18 +4,16 @@ import { NextResponse } from 'next/server';
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
-    const title = searchParams.get('title') ?? undefined;
     const keyword = searchParams.get('keyword');
     const order = searchParams.get('order');
     const pageToken = searchParams.get('pageToken') ?? undefined;
 
-    if (!(order == 'date' || order == 'viewCount')) {
+    if (!(order == 'date' || order == 'viewCount' || order == 'relevance')) {
       return new Response(null, { status: 400 });
     }
 
     if (keyword) {
       const result = await getVideosWithKeyword({
-        title,
         keyword,
         order,
         pageToken,

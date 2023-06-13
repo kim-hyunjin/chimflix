@@ -1,26 +1,3 @@
-.smItem {
-  position: relative;
-  width: 300px;
-  min-width: 300px;
-  height: 170px;
-  min-height: 170px;
-}
-
-.mdItem {
-  position: relative;
-  width: 300px;
-  min-width: 300px;
-  height: 170px;
-  min-height: 170px;
-}
-
-.lgItem {
-  position: relative;
-  width: 440px;
-  min-width: 440px;
-  height: 248px;
-  min-height: 248px;
-}
 .container {
   margin-right: 0.25rem /* 4px */;
   cursor: pointer;
