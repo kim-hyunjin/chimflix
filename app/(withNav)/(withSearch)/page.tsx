@@ -13,9 +13,9 @@ export default async function Page() {
     queryClient.prefetchInfiniteQuery(['recentVideos'], () => getVideos({ order: 'date' })),
     queryClient.prefetchInfiniteQuery(['popularVideos'], () => getVideos({ order: 'viewCount' })),
     queryClient.prefetchInfiniteQuery(['playlists'], () => getPlaylists(undefined)),
-    keywords.map(({ title, keyword }) =>
+    keywords.map(({ keyword }) =>
       queryClient.prefetchInfiniteQuery(['searchVideo', keyword], () =>
-        getVideosWithKeyword({ title, keyword })
+        getVideosWithKeyword({ keyword, order: 'relavance' })
       )
     ),
   ]);

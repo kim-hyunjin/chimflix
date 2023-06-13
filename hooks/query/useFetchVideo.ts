@@ -1,25 +1,25 @@
 import { YoutubeSnippetsWithPage } from '@/lib/videos';
+import { OrderOption } from '@/types/youtube';
 
 import { useInfiniteQuery } from '@tanstack/react-query';
 
 const useFetchVideo = ({
   queryKey,
   initialData,
-  order,
+  order = 'relavance',
 }: {
   queryKey: string;
   initialData?: YoutubeSnippetsWithPage;
-  order?: 'date' | 'viewCount';
+  order?: OrderOption;
 }) => {
   const queryResult = useInfiniteQuery<YoutubeSnippetsWithPage>(
     [queryKey],
     async ({ pageParam = null }) => {
-      const res = await fetch(
-        `/api/search?order=date${pageParam ? `&pageToken=${pageParam}` : ''}${
-          order ? `&order=${order}` : ''
-        }`,
-        { method: 'GET' }
-      );
+      let url = `/api/search?order=${order}`;
+      if (pageParam) {
+        url += `&pageToken=${pageParam}`;
+      }
+      const res = await fetch(url, { method: 'GET' });
       return await res.json();
     },
     {

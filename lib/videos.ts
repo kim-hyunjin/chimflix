@@ -3,7 +3,7 @@ import {
   fetchDummyPlaylist,
   fetchDummyPlaylistItem,
 } from '@/fixture/dummyVideoData';
-import { YoutubeSnippet, VideoInfo, PlaylistInfo } from '../types/youtube';
+import { YoutubeSnippet, VideoInfo, PlaylistInfo, OrderOption } from '../types/youtube';
 import { getWatchedVideos } from './db/hasura';
 import { getIssuerFromToken } from './token';
 
@@ -11,14 +11,13 @@ const YOUTUBE_API_URL = 'https://www.googleapis.com/youtube/v3';
 const calmdownman_id = 'UCUj6rrhMTR9pipbAWBAMvUQ';
 
 interface GetVideoOption {
-  order?: 'date' | 'viewCount';
+  order: OrderOption;
   pageToken?: string;
   requestInit?: RequestInit;
 }
 
 interface GetVideoWithKeywordParam extends GetVideoOption {
   keyword: string;
-  title?: string;
 }
 
 export interface YoutubeSnippetsWithPage {
@@ -78,44 +77,37 @@ export const getVideos = (option?: GetVideoOption): Promise<YoutubeSnippetsWithP
     });
   }
 
-  const URL = `${YOUTUBE_API_URL}/search?part=snippet&channelId=${calmdownman_id}&order=${
-    option?.order || 'date'
-  }&type=video&maxResults=25&key=${process.env.YOUTUBE_API_KEY}${
-    option?.pageToken ? `&pageToken=${option.pageToken}` : ''
-  }`;
+  let url = `${YOUTUBE_API_URL}/search?part=snippet&channelId=${calmdownman_id}&type=video&maxResults=25&key=${process.env.YOUTUBE_API_KEY}`;
+  if (option) {
+    url += `&order=${option.order}`;
+    if (option.pageToken) {
+      url += `&pageToken=${option.pageToken}`;
+    }
+  }
 
-  return fetchYoutubeDatas<YoutubeSnippet>(URL, commonSnippetMapper, option?.requestInit);
+  return fetchYoutubeDatas<YoutubeSnippet>(url, commonSnippetMapper, option?.requestInit);
 };
 
 export const getVideosWithKeyword = async ({
-  title,
   keyword,
   order,
   pageToken,
   requestInit,
-}: GetVideoWithKeywordParam): Promise<{
-  title?: string;
-  keyword: string;
-  contents: YoutubeSnippetsWithPage;
-}> => {
+}: GetVideoWithKeywordParam): Promise<YoutubeSnippetsWithPage> => {
   if (process.env.NODE_ENV !== 'production') {
     return new Promise((res) => {
       const contents = fetchDummyData(pageToken);
-      res({ title, keyword, contents });
+      res(contents);
     });
   }
-  const URL = `${YOUTUBE_API_URL}/search?part=snippet&channelId=${calmdownman_id}&order=${
-    order || 'date'
-  }&type=video&maxResults=25&key=${process.env.YOUTUBE_API_KEY}&q=${keyword}${
-    pageToken ? `&pageToken=${pageToken}` : ''
-  }`;
 
-  const contents = await fetchYoutubeDatas<YoutubeSnippet>(URL, commonSnippetMapper, requestInit);
-  return {
-    title,
-    keyword,
-    contents,
-  };
+  let url = `${YOUTUBE_API_URL}/search?part=snippet&channelId=${calmdownman_id}&order=${order}&type=video&maxResults=25&key=${process.env.YOUTUBE_API_KEY}&q=${keyword}`;
+  if (pageToken) {
+    url += `&pageToken=${pageToken}`;
+  }
+
+  const contents = await fetchYoutubeDatas<YoutubeSnippet>(url, commonSnippetMapper, requestInit);
+  return contents;
 };
 
 /**
@@ -131,11 +123,12 @@ export const getPlaylists = (
     });
   }
 
-  const URL = `${YOUTUBE_API_URL}/playlists?part=snippet&channelId=${calmdownman_id}&maxResults=25&key=${
-    process.env.YOUTUBE_API_KEY
-  }${pageToken ? `&pageToken=${pageToken}` : ''}`;
+  let url = `${YOUTUBE_API_URL}/playlists?part=snippet&channelId=${calmdownman_id}&maxResults=25&key=${process.env.YOUTUBE_API_KEY}`;
+  if (pageToken) {
+    url += `&pageToken=${pageToken}`;
+  }
 
-  return fetchYoutubeDatas<YoutubeSnippet>(URL, commonSnippetMapper, requestInit);
+  return fetchYoutubeDatas<YoutubeSnippet>(url, commonSnippetMapper, requestInit);
 };
 
 export const getPlaylistDetail = async (
@@ -208,12 +201,13 @@ export const getPlaylistItems = async (
       res(fetchDummyPlaylistItem());
     });
   }
-  const URL = `${YOUTUBE_API_URL}/playlistItems?part=snippet,contentDetails&playlistId=${playlistId}&maxResults=10&key=${
-    process.env.YOUTUBE_API_KEY
-  }${pageToken ? `&pageToken=${pageToken}` : ''}`;
+  let url = `${YOUTUBE_API_URL}/playlistItems?part=snippet,contentDetails&playlistId=${playlistId}&maxResults=10&key=${process.env.YOUTUBE_API_KEY}`;
+  if (pageToken) {
+    url += `&pageToken=${pageToken}`;
+  }
 
   try {
-    const fetchResult = await fetchYoutubeDatas(URL, playlistItemMapper, requestInit);
+    const fetchResult = await fetchYoutubeDatas(url, playlistItemMapper, requestInit);
     // console.log({ fetchResult });
     return fetchResult;
   } catch (e) {

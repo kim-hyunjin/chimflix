@@ -20,3 +20,5 @@ export enum LIKE {
   DISLIKE,
   LIKE,
 }
+
+export type OrderOption = 'date' | 'viewCount' | 'relavance';
