@@ -7,7 +7,7 @@ const useSearchVideo = ({
   queryKey,
   searchKeyword,
   initialData,
-  order = 'relavance',
+  order = 'relevance',
 }: {
   queryKey: string;
   searchKeyword: string;

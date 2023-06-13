@@ -8,7 +8,7 @@ export async function GET(req: Request) {
     const order = searchParams.get('order');
     const pageToken = searchParams.get('pageToken') ?? undefined;
 
-    if (!(order == 'date' || order == 'viewCount' || order == 'relavance')) {
+    if (!(order == 'date' || order == 'viewCount' || order == 'relevance')) {
       return new Response(null, { status: 400 });
     }
 

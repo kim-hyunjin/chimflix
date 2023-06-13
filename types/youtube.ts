@@ -21,4 +21,4 @@ export enum LIKE {
   LIKE,
 }
 
-export type OrderOption = 'date' | 'viewCount' | 'relavance';
+export type OrderOption = 'date' | 'viewCount' | 'relevance';

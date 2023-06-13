@@ -6,7 +6,7 @@ import { useInfiniteQuery } from '@tanstack/react-query';
 const useFetchVideo = ({
   queryKey,
   initialData,
-  order = 'relavance',
+  order = 'relevance',
 }: {
   queryKey: string;
   initialData?: YoutubeSnippetsWithPage;

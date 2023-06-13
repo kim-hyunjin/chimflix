@@ -13,7 +13,7 @@ export default function useCardsSlide({
   const [rightBtnVisivility, setRightBtnVisibility] = useState(false);
 
   const totalSlideWidth = itemLength * cardSize;
-  const maxX = totalSlideWidth - window.innerWidth + cardSize;
+  const maxX = typeof window !== 'undefined' ? totalSlideWidth - window.innerWidth + cardSize : 0;
 
   useEffect(() => {
     if (hasNext) {
