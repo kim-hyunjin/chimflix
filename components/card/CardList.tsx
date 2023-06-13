@@ -54,14 +54,10 @@ export default function CardList({
           ref={scrollRef}
           className={clsx(styles.cardWrapper, shouldWrap && styles.wrap)}
           onWheel={!shouldWrap ? onWheel : undefined}
-          style={
-            !shouldWrap
-              ? { ...scrollStyle, height: `${wrapperHeight}px` }
-              : { height: `${wrapperHeight}px` }
-          }
+          style={!shouldWrap ? { ...scrollStyle, height: `${wrapperHeight}px` } : undefined}
         >
           {videos.map((data, i) => (
-            <Link key={data.id} href={`/${type}/${data.id}`}>
+            <Link key={data.id} href={`/${type}/${data.id}`} prefetch={false}>
               <Card imgUrl={data.imgUrl} alt={data.title} size={size} elemIndex={i} />
             </Link>
           ))}
@@ -109,7 +105,7 @@ export default function CardList({
         style={{ height: `${wrapperHeight}px` }}
       >
         {videos.map((data, i) => (
-          <Link key={data.id} href={`/${type}/${data.id}`}>
+          <Link key={data.id} href={`/${type}/${data.id}`} prefetch={false}>
             <Card imgUrl={data.imgUrl} alt={data.title} size={size} elemIndex={i} />
           </Link>
         ))}

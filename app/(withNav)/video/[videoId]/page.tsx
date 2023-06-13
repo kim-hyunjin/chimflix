@@ -7,6 +7,8 @@ import getQueryClient from '@/utils/getQueryClient';
 import { dehydrate } from '@tanstack/react-query';
 import RQHydrate from '@/utils/rq_hydrate_client';
 
+export const revalidate = 86400; // 1 day
+
 async function getData(videoId: string): Promise<VideoInfo | null> {
   return getVideoDetail(videoId);
 }
@@ -29,7 +31,6 @@ export default async function Page({ params }: { params: { videoId: string } }) 
 
   return (
     <RQHydrate state={dehydratedState}>
-      {' '}
       <VideoDetail video={video} />
     </RQHydrate>
   );
