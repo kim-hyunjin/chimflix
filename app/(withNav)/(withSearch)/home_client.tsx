@@ -6,18 +6,19 @@ import styles from '@/styles/Home.module.css';
 
 import useFetchPlaylist from '@/hooks/query/useFetchPlaylist';
 import useFetchWatched from '@/hooks/query/useFetchWatched';
-import SectionCardsWithKeyword from '@/components/card/SectionCardsWithKeyword';
 import useFetchVideo from '@/hooks/query/useFetchVideo';
 import useFetchSaved from '@/hooks/query/useFetchSaved';
 import useFetchWatchingNow from '@/hooks/query/useFetchWatchingNow';
-import { keywords } from './constant';
+import KeywordsSections from '@/components/section/KeywordsSections';
 
 export default function Home() {
   const recentVideos = useFetchVideo({
     queryKey: 'recentVideos',
+    order: 'date',
   });
   const popularVideos = useFetchVideo({
     queryKey: 'popularVideos',
+    order: 'viewCount',
   });
   const playlists = useFetchPlaylist({
     queryKey: 'playlists',
@@ -100,33 +101,8 @@ export default function Home() {
             fetchNextData: playlists.fetchNextPage,
           }}
         />
-        {keywords &&
-          shuffle(keywords).map((c) => (
-            <SectionCardsWithKeyword
-              key={c.title}
-              title={c.title}
-              keyword={c.keyword}
-              size={'medium'}
-            />
-          ))}
+        <KeywordsSections />
       </div>
     </>
   );
-}
-
-function shuffle(array: any[]) {
-  let currentIndex = array.length,
-    randomIndex;
-
-  // While there remain elements to shuffle.
-  while (currentIndex != 0) {
-    // Pick a remaining element.
-    randomIndex = Math.floor(Math.random() * currentIndex);
-    currentIndex--;
-
-    // And swap it with the current element.
-    [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
-  }
-
-  return array;
 }
