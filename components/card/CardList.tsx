@@ -1,5 +1,4 @@
 import useInfiniteScroll from '@/hooks/useInfiniteScroll';
-import { useEffect, useState } from 'react';
 import styles from './SectionCards.module.css';
 import clsx from 'classnames';
 import { motion } from 'framer-motion';
@@ -8,6 +7,7 @@ import Card from './Card';
 import { YoutubeSnippet } from '@/types/youtube';
 import { mobileCardSize, pcCardSize } from './constant';
 import useIsMobile from '@/hooks/useIsMobile';
+import useCardsSlide from '@/hooks/useCardsSlide';
 
 type Props = {
   title: string;
@@ -30,50 +30,24 @@ export default function CardList({
   shouldWrap,
   size = 'medium',
 }: Props) {
-  const [x, setX] = useState(0);
-  const [maxX, setMaxX] = useState<number | undefined>(undefined);
   const { setTargeEl } = useInfiniteScroll(isFetching, fetchNextData);
   const { isMobile } = useIsMobile();
 
-  const handleGoLeft = () => {
-    setX((prev) => {
-      const c = isMobile ? 0 : 300;
-      const target = prev + window.innerWidth - c;
-      if (target > 0) return 0;
-      return target;
-    });
-  };
-
-  const handleGoRight = () => {
-    setX((prev) => {
-      const c = isMobile ? 0 : 300;
-      const target = prev - window.innerWidth + c;
-      const cardSize = isMobile ? mobileCardSize[size].width : pcCardSize[size].width;
-      const maxX = -(videos.length * cardSize - window.innerWidth + c);
-      console.log({ prev, target, maxX });
-      if (!maxX && !hasNext) {
-        setMaxX(maxX);
-        return maxX;
-      }
-      if (!maxX) {
-        return target;
-      }
-      if (target >= maxX) {
-        return target;
-      } else {
-        return maxX;
-      }
-    });
-  };
-
+  const cardSize = isMobile ? mobileCardSize[size].width : pcCardSize[size].width;
   const wrapperHeight = isMobile ? mobileCardSize[size].height + 10 : pcCardSize[size].height + 20;
+
+  const { x, rightBtnVisivility, leftBtnVisivility, handleGoLeft, handleGoRight } = useCardsSlide({
+    itemLength: videos.length,
+    cardSize,
+    hasNext: Boolean(hasNext),
+  });
 
   return (
     <section className={styles.container}>
       <h2 className={styles.title}>{title}</h2>
       {!shouldWrap && (
         <>
-          {x !== 0 && (
+          {leftBtnVisivility && (
             <motion.button
               className={styles.goLeftButton}
               onClick={handleGoLeft}
@@ -82,7 +56,7 @@ export default function CardList({
               <div className={styles.leftArrow}></div>
             </motion.button>
           )}
-          {x !== maxX && (
+          {rightBtnVisivility && (
             <motion.button
               className={styles.goRightButton}
               onClick={handleGoRight}
@@ -95,7 +69,7 @@ export default function CardList({
       )}
       <motion.div
         className={clsx(styles.cardWrapper, shouldWrap && styles.wrap, size)}
-        animate={{ x }}
+        animate={{ x: -x }}
         transition={{ ease: 'linear' }}
         style={{ height: `${wrapperHeight}px` }}
       >
