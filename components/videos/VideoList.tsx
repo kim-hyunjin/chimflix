@@ -11,8 +11,7 @@ const VideoList = ({ videos }: { videos: YoutubeSnippet[] }) => {
         <li key={v.id} className={styles.listItem}>
           <div className={styles.listItemLeft}>
             <div className={styles.listItemNumber}>{i + 1}</div>
-            <Link href={`/video/${v.id}`}>
-
+            <Link href={`/video/${v.id}`} prefetch={false}>
               {/* <iframe
           id='ytplayer'
           width='200'
@@ -22,7 +21,6 @@ const VideoList = ({ videos }: { videos: YoutubeSnippet[] }) => {
           allowFullScreen
         ></iframe> */}
               <Card imgUrl={v.imgUrl} size='small' elemIndex={i} />
-
             </Link>
           </div>
 
