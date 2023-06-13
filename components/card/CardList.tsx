@@ -9,6 +9,7 @@ import { mobileCardSize, pcCardSize } from './constant';
 import useIsMobile from '@/hooks/useIsMobile';
 import useCardsSlide from '@/hooks/useCardsSlide';
 import useHorizontalScrolling from '@/hooks/useHorizontalScrolling';
+import { useState } from 'react';
 
 type Props = {
   title: string;
@@ -33,6 +34,7 @@ export default function CardList({
 }: Props) {
   const { setTargeEl } = useInfiniteScroll(isFetching, fetchNextData);
   const { isMobile } = useIsMobile();
+  const [isHover, setIsHover] = useState(false);
 
   const cardSize = isMobile ? mobileCardSize[size].width : pcCardSize[size].width;
   const wrapperHeight = isMobile ? mobileCardSize[size].height + 30 : pcCardSize[size].height + 20;
@@ -70,15 +72,21 @@ export default function CardList({
   }
 
   return (
-    <section className={styles.container}>
+    <section
+      className={styles.container}
+      onMouseEnter={() => setIsHover(true)}
+      onMouseLeave={() => {
+        setIsHover(false);
+      }}
+    >
       <h2 className={styles.title}>{title}</h2>
-      {!shouldWrap && (
+      {!shouldWrap && isHover && (
         <>
           {leftBtnVisivility && (
             <motion.button
               className={styles.goLeftButton}
               onClick={handleGoLeft}
-              whileHover={{ backgroundColor: 'rgba(0, 0, 0, 0.9)' }}
+              whileHover={{ backgroundColor: 'rgba(0, 0, 0, 0.8)' }}
             >
               <div className={styles.leftArrow}></div>
             </motion.button>
@@ -87,7 +95,7 @@ export default function CardList({
             <motion.button
               className={styles.goRightButton}
               onClick={handleGoRight}
-              whileHover={{ backgroundColor: 'rgba(0, 0, 0, 0.9)' }}
+              whileHover={{ backgroundColor: 'rgba(0, 0, 0, 0.8)' }}
             >
               <div className={styles.rightArrow}></div>
             </motion.button>

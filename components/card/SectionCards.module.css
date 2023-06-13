@@ -42,41 +42,39 @@
   left: 0rem;
   width: 3.5rem;
   height: 85%;
-  background-color: rgba(0, 0, 0, 0.6);
   z-index: 100;
   display: flex;
   justify-content: center;
   align-items: center;
+  background-color: rgba(0, 0, 0, 0.5);
 }
 .goRightButton {
   position: absolute;
   right: 0rem;
   width: 3.5rem;
   height: 85%;
-  background-color: rgba(0, 0, 0, 0.6);
   z-index: 100;
   display: flex;
   justify-content: center;
   align-items: center;
+  background-color: rgba(0, 0, 0, 0.5);
 }
 .leftArrow {
-  width: 1.25rem;
-  height: 1.25rem;
+  width: 1.5rem;
+  height: 1.5rem;
   border-color: white;
   border-style: solid;
-  border-radius: 0.25rem;
-  border-top: 0.25rem;
-  border-left: 0.25rem;
+  border-top: 1rem;
+  border-left: 1rem;
   transform: rotate(135deg);
 }
 .rightArrow {
-  width: 1.25rem;
-  height: 1.25rem;
+  width: 1.5rem;
+  height: 1.5rem;
   border-color: white;
   border-style: solid;
-  border-radius: 0.25rem;
-  border-top: 0.25rem;
-  border-left: 0.25rem;
+  border-top: 1rem;
+  border-left: 1rem;
   transform: rotate(-45deg);
 }
 
