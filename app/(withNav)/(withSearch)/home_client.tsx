@@ -35,17 +35,6 @@ export default function Home() {
       )}
       <div className={styles.sectionWrapper}>
         <SectionCards
-          title='시청중인 컨텐츠'
-          datas={watching.data}
-          size={'large'}
-          type={'video'}
-          nextDataFetchOption={{
-            isFetching: watching.isFetching,
-            hasNext: Boolean(watching.hasNextPage),
-            fetchNextData: watching.fetchNextPage,
-          }}
-        />
-        <SectionCards
           title='최신 컨텐츠'
           datas={recentVideos.data || []}
           size={'large'}
@@ -59,12 +48,23 @@ export default function Home() {
         <SectionCards
           title='인기 컨텐츠'
           datas={popularVideos.data || []}
-          size={'medium'}
+          size={'large'}
           type={'video'}
           nextDataFetchOption={{
             isFetching: popularVideos.isFetching,
             hasNext: (popularVideos.data || []).length <= 100 && Boolean(popularVideos.hasNextPage),
             fetchNextData: popularVideos.fetchNextPage,
+          }}
+        />
+        <SectionCards
+          title='시청중인 컨텐츠'
+          datas={watching.data}
+          size={'large'}
+          type={'video'}
+          nextDataFetchOption={{
+            isFetching: watching.isFetching,
+            hasNext: Boolean(watching.hasNextPage),
+            fetchNextData: watching.fetchNextPage,
           }}
         />
         <SectionCards
@@ -79,17 +79,6 @@ export default function Home() {
           }}
         />
         <SectionCards
-          title='플레이리스트'
-          datas={playlists.data}
-          size={'medium'}
-          type={'playlist'}
-          nextDataFetchOption={{
-            isFetching: playlists.isFetching,
-            hasNext: Boolean(playlists.hasNextPage),
-            fetchNextData: playlists.fetchNextPage,
-          }}
-        />
-        <SectionCards
           title='다시보기'
           datas={watched.data}
           size={'medium'}
@@ -100,15 +89,44 @@ export default function Home() {
             fetchNextData: watched.fetchNextPage,
           }}
         />
-        {keywords?.map((c) => (
-          <SectionCardsWithKeyword
-            key={c.title}
-            title={c.title}
-            keyword={c.keyword}
-            size={'medium'}
-          />
-        ))}
+        <SectionCards
+          title='플레이리스트'
+          datas={playlists.data}
+          size={'medium'}
+          type={'playlist'}
+          nextDataFetchOption={{
+            isFetching: playlists.isFetching,
+            hasNext: Boolean(playlists.hasNextPage),
+            fetchNextData: playlists.fetchNextPage,
+          }}
+        />
+        {keywords &&
+          shuffle(keywords).map((c) => (
+            <SectionCardsWithKeyword
+              key={c.title}
+              title={c.title}
+              keyword={c.keyword}
+              size={'medium'}
+            />
+          ))}
       </div>
     </>
   );
+}
+
+function shuffle(array: any[]) {
+  let currentIndex = array.length,
+    randomIndex;
+
+  // While there remain elements to shuffle.
+  while (currentIndex != 0) {
+    // Pick a remaining element.
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex--;
+
+    // And swap it with the current element.
+    [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+  }
+
+  return array;
 }

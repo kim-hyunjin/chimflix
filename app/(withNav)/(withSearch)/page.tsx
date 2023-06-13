@@ -5,7 +5,7 @@ import { dehydrate } from '@tanstack/react-query';
 import { keywords } from './constant';
 import Home from './home_client';
 
-export const revalidate = 3600; // 1hour
+export const revalidate = 21600; // 6hour
 
 export default async function Page() {
   const queryClient = getQueryClient();
